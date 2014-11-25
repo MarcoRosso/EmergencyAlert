@@ -27,9 +27,15 @@ public final class R {
     public static final class drawable {
         public static final int aboutdev=0x7f020000;
         public static final int alert=0x7f020001;
-        public static final int leftbutton=0x7f020002;
-        public static final int logoalert=0x7f020003;
-        public static final int rightbutton=0x7f020004;
+        public static final int alertbottombuttonstate=0x7f020002;
+        public static final int background=0x7f020003;
+        public static final int bottombuttonstyle=0x7f020004;
+        public static final int configbottombuttonstate=0x7f020005;
+        public static final int leftbutton=0x7f020006;
+        public static final int leftbutton_pressed=0x7f020007;
+        public static final int logoalert=0x7f020008;
+        public static final int rightbutton=0x7f020009;
+        public static final int rightbutton_pressed=0x7f02000a;
     }
     public static final class id {
         public static final int Latitu=0x7f0a0013;
@@ -43,12 +49,13 @@ public final class R {
         public static final int action_about=0x7f0a001e;
         public static final int action_settings=0x7f0a001c;
         public static final int action_sound=0x7f0a001d;
+        public static final int alertbottom=0x7f0a001a;
         public static final int altitude=0x7f0a0007;
         public static final int altitudealert=0x7f0a000b;
         public static final int altitudechanged=0x7f0a000a;
         public static final int bottombutton=0x7f0a0019;
         public static final int button1=0x7f0a0018;
-        public static final int changjingbottom=0x7f0a001a;
+        public static final int configbottom=0x7f0a001b;
         public static final int gpsinfo=0x7f0a0011;
         public static final int inpointfives=0x7f0a0009;
         public static final int linearLayout1=0x7f0a0003;
@@ -59,7 +66,6 @@ public final class R {
         public static final int longitu=0x7f0a0016;
         public static final int longitude=0x7f0a0017;
         public static final int now=0x7f0a0004;
-        public static final int quyubottom=0x7f0a001b;
         public static final int temperature=0x7f0a0002;
         public static final int temperaturealert=0x7f0a0006;
         public static final int temperaturenow=0x7f0a0005;
