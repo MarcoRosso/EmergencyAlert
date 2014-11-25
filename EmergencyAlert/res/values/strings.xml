@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">EmergencyAlert</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Change Emergency Number</string>
+    <string name="action_about">About Developer</string>
+    <string name="action_sound">No Alert Sound</string>
+    <string name="temperature">Temperature</string>
+    <string name="now">Now:</string>
+    <string name="altitude">Altitude Changed</string>
+    <string name="inpointfives">In 0.5s:</string>
+     <string name="TU">Unavailable</string>
+     <string name="AU">Unavailable</string>
+     <string name="acc">Acceleration</string>
+     <string name="ac">Composed:</string>
+     <string name="GPS">GPS Info</string>
+     <string name="latitu">Latitude:</string>
+     <string name="longitu">Longitude:</string>
+      <string name="sendmsg">Send Alert Messages?</string>
+      <string name="serviceinfo">EmergencyAlert is running in background.</string>
+     
+
+</resources>
