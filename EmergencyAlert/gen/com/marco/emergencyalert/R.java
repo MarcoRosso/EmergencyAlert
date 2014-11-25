@@ -27,7 +27,9 @@ public final class R {
     public static final class drawable {
         public static final int aboutdev=0x7f020000;
         public static final int alert=0x7f020001;
-        public static final int logoalert=0x7f020002;
+        public static final int leftbutton=0x7f020002;
+        public static final int logoalert=0x7f020003;
+        public static final int rightbutton=0x7f020004;
     }
     public static final class id {
         public static final int Latitu=0x7f0a0013;
@@ -38,13 +40,15 @@ public final class R {
         public static final int acceleration=0x7f0a000c;
         public static final int accnow=0x7f0a000f;
         public static final int acnow=0x7f0a000e;
-        public static final int action_about=0x7f0a001b;
-        public static final int action_settings=0x7f0a0019;
-        public static final int action_sound=0x7f0a001a;
+        public static final int action_about=0x7f0a001e;
+        public static final int action_settings=0x7f0a001c;
+        public static final int action_sound=0x7f0a001d;
         public static final int altitude=0x7f0a0007;
         public static final int altitudealert=0x7f0a000b;
         public static final int altitudechanged=0x7f0a000a;
+        public static final int bottombutton=0x7f0a0019;
         public static final int button1=0x7f0a0018;
+        public static final int changjingbottom=0x7f0a001a;
         public static final int gpsinfo=0x7f0a0011;
         public static final int inpointfives=0x7f0a0009;
         public static final int linearLayout1=0x7f0a0003;
@@ -55,6 +59,7 @@ public final class R {
         public static final int longitu=0x7f0a0016;
         public static final int longitude=0x7f0a0017;
         public static final int now=0x7f0a0004;
+        public static final int quyubottom=0x7f0a001b;
         public static final int temperature=0x7f0a0002;
         public static final int temperaturealert=0x7f0a0006;
         public static final int temperaturenow=0x7f0a0005;
@@ -62,6 +67,7 @@ public final class R {
     public static final class layout {
         public static final int about=0x7f030000;
         public static final int activity_main=0x7f030001;
+        public static final int alertactivity=0x7f030002;
     }
     public static final class menu {
         public static final int main=0x7f090000;
