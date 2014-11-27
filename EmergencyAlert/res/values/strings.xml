@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">EmergencyAlert</string>
+    <string name="app_name">紧急报警</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Change Emergency Number</string>
     <string name="action_about">About Developer</string>

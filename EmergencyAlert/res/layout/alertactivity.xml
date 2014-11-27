@@ -3,6 +3,272 @@
     android:layout_width="match_parent" 
     android:layout_height="match_parent" 
     android:background="@drawable/background">
+       <TextView
+       android:id="@+id/tittle"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentTop="true"
+       android:layout_centerHorizontal="true"
+       android:layout_marginTop="10dp"
+       android:textColor="#A4A4A4"
+       android:textSize="25sp"
+       android:textStyle="bold"   
+       android:shadowColor="#ff000000"  
+       android:shadowDx="2"  
+       android:shadowDy="2"       
+       android:shadowRadius="1" 
+       android:text="      传感器信息\nSensor Information" />
+   <ScrollView 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:layout_below="@+id/tittle"
+    android:layout_above="@+id/bottombutton"
+    android:scrollbars="vertical">
+   <LinearLayout 
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent" 
+            android:orientation="vertical" > 
+     <LinearLayout
+         android:id="@+id/temperaturepart"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:layout_marginTop="10dp"
+         android:layout_marginLeft="10dp"
+         android:layout_marginRight="10dp"
+         android:background="@drawable/partbackground"
+         android:orientation="vertical" >
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/temperatureicon" />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:singleLine="true"
+        android:text="温度Temperature"
+        android:textColor="#A4A4A4"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+       </LinearLayout>
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp">
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:text="当前:\nNow:"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />    
+        <TextView
+        android:id="@+id/temperaturenow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="Unavailable"
+        android:textColor="#A4A4A4"
+        android:singleLine="true"
+        android:textSize="15sp"/>   
+       <ImageView
+        android:id="@+id/temperaturealert"
+        android:layout_width="42dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/alert" />  
+       </LinearLayout>
+    </LinearLayout>
+    
+    <LinearLayout
+         android:id="@+id/alltitudepart"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:layout_marginTop="10dp"
+         android:layout_marginLeft="10dp"
+         android:layout_marginRight="10dp"
+         android:background="@drawable/partbackground"
+         android:orientation="vertical" >
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/altitudeicon" />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:singleLine="true"
+        android:text="海拔变化Altitude Changed"
+        android:textColor="#A4A4A4"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+       </LinearLayout>
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp">
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:text="在0.5秒内:\nIn 0.5s:"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />    
+        <TextView
+        android:id="@+id/altitudechanged"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="Unavailable"
+        android:textColor="#A4A4A4"
+        android:singleLine="true"
+        android:textSize="15sp"/>   
+       <ImageView
+        android:id="@+id/altitudealert"
+        android:layout_width="42dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/alert" />  
+       </LinearLayout>
+    </LinearLayout>
+        <LinearLayout
+         android:id="@+id/accpart"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:layout_marginTop="10dp"
+         android:layout_marginLeft="10dp"
+         android:layout_marginRight="10dp"
+         android:background="@drawable/partbackground"
+         android:orientation="vertical" >
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/accicon" />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:singleLine="true"
+        android:text="加速度Acceleration"
+        android:textColor="#A4A4A4"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+       </LinearLayout>
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp">
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:text="综合:\nComposed:"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />    
+        <TextView
+        android:id="@+id/accnow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="Unavailable"
+        android:textColor="#A4A4A4"
+        android:singleLine="true"
+        android:textSize="15sp"/>   
+       <ImageView
+        android:id="@+id/accalert"
+        android:layout_width="42dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/alert" />  
+       </LinearLayout>
+    </LinearLayout>
+      
+      <LinearLayout
+         android:id="@+id/gpspart"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:layout_marginTop="10dp"
+         android:layout_marginLeft="10dp"
+         android:layout_marginRight="10dp"
+         android:background="@drawable/partbackground"
+         android:orientation="vertical" >
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/gpsicon" />
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:singleLine="true"
+        android:text="位置信息GPS Info"
+        android:textColor="#A4A4A4"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+       </LinearLayout>
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp">
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:text="经度:\nLatitude:"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />    
+        <TextView
+        android:id="@+id/Latitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="Unavailable"
+        android:textColor="#A4A4A4"
+        android:singleLine="true"
+        android:textSize="15sp"/>   
+       </LinearLayout>
+              <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp">
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:text="纬度:\nLongitude:"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />    
+        <TextView
+        android:id="@+id/longitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:text="Unavailable"
+        android:textColor="#A4A4A4"
+        android:singleLine="true"
+        android:textSize="15sp"/>   
+       </LinearLayout>
+    </LinearLayout>
+     </LinearLayout>
+    </ScrollView>
    <LinearLayout 
         android:id="@+id/bottombutton"
         android:layout_width="match_parent"
@@ -29,4 +295,7 @@
         android:background="@drawable/configbottombuttonstate"
         />  
         </LinearLayout>
+
+
+
 </RelativeLayout>
