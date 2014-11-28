@@ -53,17 +53,18 @@ public final class R {
         public static final int accnow=0x7f0a000f;
         public static final int accpart=0x7f0a001d;
         public static final int acnow=0x7f0a000e;
-        public static final int action_about=0x7f0a0023;
-        public static final int action_settings=0x7f0a0021;
-        public static final int action_sound=0x7f0a0022;
-        public static final int alertbottom=0x7f0a001f;
+        public static final int action_about=0x7f0a0024;
+        public static final int action_settings=0x7f0a0022;
+        public static final int action_sound=0x7f0a0023;
+        public static final int address=0x7f0a001f;
+        public static final int alertbottom=0x7f0a0020;
         public static final int alltitudepart=0x7f0a001c;
         public static final int altitude=0x7f0a0007;
         public static final int altitudealert=0x7f0a000b;
         public static final int altitudechanged=0x7f0a000a;
         public static final int bottombutton=0x7f0a001a;
         public static final int button1=0x7f0a0018;
-        public static final int configbottom=0x7f0a0020;
+        public static final int configbottom=0x7f0a0021;
         public static final int gpsinfo=0x7f0a0011;
         public static final int gpspart=0x7f0a001e;
         public static final int inpointfives=0x7f0a0009;
@@ -84,7 +85,7 @@ public final class R {
     public static final class layout {
         public static final int about=0x7f030000;
         public static final int activity_main=0x7f030001;
-        public static final int alertactivity=0x7f030002;
+        public static final int alertlayout=0x7f030002;
     }
     public static final class menu {
         public static final int main=0x7f090000;
