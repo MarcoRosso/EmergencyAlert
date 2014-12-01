@@ -12,6 +12,15 @@ public final class R {
         public static final int anim_alpha=0x7f040000;
     }
     public static final class attr {
+        /**  Button内容以分号隔开,内容为打开与关闭(默认为on;off),打开在分号前关闭在分号后 
+         <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int onOff=0x7f010000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -27,21 +36,33 @@ public final class R {
     public static final class drawable {
         public static final int aboutdev=0x7f020000;
         public static final int accicon=0x7f020001;
-        public static final int alert=0x7f020002;
-        public static final int alertbottombuttonstate=0x7f020003;
-        public static final int altitudeicon=0x7f020004;
-        public static final int background=0x7f020005;
-        public static final int bottombuttonstyle=0x7f020006;
-        public static final int configbottombuttonstate=0x7f020007;
-        public static final int gpsicon=0x7f020008;
-        public static final int gpspartbackground=0x7f020009;
-        public static final int leftbutton=0x7f02000a;
-        public static final int leftbutton_pressed=0x7f02000b;
-        public static final int logoalert=0x7f02000c;
-        public static final int partbackground=0x7f02000d;
-        public static final int rightbutton=0x7f02000e;
-        public static final int rightbutton_pressed=0x7f02000f;
-        public static final int temperatureicon=0x7f020010;
+        public static final int addcontact=0x7f020002;
+        public static final int alert=0x7f020003;
+        public static final int alertbottombuttonstate=0x7f020004;
+        public static final int altitudeicon=0x7f020005;
+        public static final int background=0x7f020006;
+        public static final int bottombuttonstyle=0x7f020007;
+        public static final int configbottombuttonstate=0x7f020008;
+        public static final int contactinput=0x7f020009;
+        public static final int gpsicon=0x7f02000a;
+        public static final int gpspartbackground=0x7f02000b;
+        public static final int leftbutton=0x7f02000c;
+        public static final int leftbutton_pressed=0x7f02000d;
+        public static final int logoalert=0x7f02000e;
+        public static final int normalbutton=0x7f02000f;
+        public static final int normalbutton_pressed=0x7f020010;
+        public static final int normalbuttonstate=0x7f020011;
+        public static final int partbackground=0x7f020012;
+        public static final int rightbutton=0x7f020013;
+        public static final int rightbutton_pressed=0x7f020014;
+        public static final int settingbackground=0x7f020015;
+        public static final int settingtitle=0x7f020016;
+        public static final int switch_bg_normal=0x7f020017;
+        public static final int switch_bg_press=0x7f020018;
+        public static final int switch_button_normal=0x7f020019;
+        public static final int switch_button_press=0x7f02001a;
+        public static final int temperatureicon=0x7f02001b;
+        public static final int weibobackground=0x7f02001c;
     }
     public static final class id {
         public static final int Latitu=0x7f0a0013;
@@ -53,21 +74,36 @@ public final class R {
         public static final int accnow=0x7f0a000f;
         public static final int accpart=0x7f0a001d;
         public static final int acnow=0x7f0a000e;
-        public static final int action_about=0x7f0a0024;
-        public static final int action_settings=0x7f0a0022;
-        public static final int action_sound=0x7f0a0023;
+        public static final int action_about=0x7f0a0042;
+        public static final int action_settings=0x7f0a0040;
+        public static final int action_sound=0x7f0a0041;
         public static final int address=0x7f0a001f;
         public static final int alertbottom=0x7f0a0020;
+        public static final int alertlist=0x7f0a003a;
         public static final int alltitudepart=0x7f0a001c;
         public static final int altitude=0x7f0a0007;
         public static final int altitudealert=0x7f0a000b;
         public static final int altitudechanged=0x7f0a000a;
+        public static final int baidupart=0x7f0a0029;
+        public static final int baiduswitch=0x7f0a002a;
         public static final int bottombutton=0x7f0a001a;
         public static final int button1=0x7f0a0018;
         public static final int configbottom=0x7f0a0021;
+        public static final int contactnumber1=0x7f0a002c;
+        public static final int contactnumber1search=0x7f0a002d;
+        public static final int contactnumber2=0x7f0a002e;
+        public static final int contactnumber2search=0x7f0a002f;
+        public static final int contactnumber3=0x7f0a0031;
+        public static final int contactnumber3search=0x7f0a0032;
+        public static final int contactnumberconfirm=0x7f0a0030;
+        public static final int contactpart=0x7f0a002b;
+        public static final int deletelist=0x7f0a0039;
         public static final int gpsinfo=0x7f0a0011;
         public static final int gpspart=0x7f0a001e;
         public static final int inpointfives=0x7f0a0009;
+        public static final int instructionpart=0x7f0a0022;
+        public static final int lightsettingpart=0x7f0a0027;
+        public static final int lightswitch=0x7f0a0028;
         public static final int linearLayout1=0x7f0a0003;
         public static final int linearLayout2=0x7f0a0008;
         public static final int linearLayout3=0x7f0a000d;
@@ -76,16 +112,33 @@ public final class R {
         public static final int longitu=0x7f0a0016;
         public static final int longitude=0x7f0a0017;
         public static final int now=0x7f0a0004;
+        public static final int recordupart=0x7f0a0037;
+        public static final int servicesettingpart=0x7f0a0023;
+        public static final int serviceswitch=0x7f0a0024;
+        public static final int showlist=0x7f0a0038;
+        public static final int soundsettingpart=0x7f0a0025;
+        public static final int soundswitch=0x7f0a0026;
+        public static final int switch_layout=0x7f0a003b;
+        public static final int switch_off_bg_textview=0x7f0a003d;
+        public static final int switch_off_button_textview=0x7f0a003f;
+        public static final int switch_on_bg_textview=0x7f0a003c;
+        public static final int switch_on_button_textview=0x7f0a003e;
         public static final int temperature=0x7f0a0002;
         public static final int temperaturealert=0x7f0a0006;
         public static final int temperaturenow=0x7f0a0005;
         public static final int temperaturepart=0x7f0a001b;
         public static final int tittle=0x7f0a0019;
+        public static final int weiboicon=0x7f0a0035;
+        public static final int weiboname=0x7f0a0036;
+        public static final int weibopart=0x7f0a0033;
+        public static final int weibosetting=0x7f0a0034;
     }
     public static final class layout {
         public static final int about=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int alertlayout=0x7f030002;
+        public static final int settinglayout=0x7f030003;
+        public static final int view_switchbutton=0x7f030004;
     }
     public static final class menu {
         public static final int main=0x7f090000;
@@ -141,4 +194,35 @@ public final class R {
          */
         public static final int AppTheme=0x7f080001;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a SwitchButton.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #SwitchButton_onOff com.marco.emergencyalert:onOff}</code></td><td> Button内容以分号隔开,内容为打开与关闭(默认为on;off),打开在分号前关闭在分号后 </td></tr>
+           </table>
+           @see #SwitchButton_onOff
+         */
+        public static final int[] SwitchButton = {
+            0x7f010000
+        };
+        /**
+          <p>
+          @attr description
+           Button内容以分号隔开,内容为打开与关闭(默认为on;off),打开在分号前关闭在分号后 
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          <p>This is a private symbol.
+          @attr name com.marco.emergencyalert:onOff
+        */
+        public static final int SwitchButton_onOff = 0;
+    };
 }
