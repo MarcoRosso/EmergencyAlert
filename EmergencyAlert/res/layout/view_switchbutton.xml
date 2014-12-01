@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    
+    android:id="@+id/switch_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/switch_on_bg_textview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/switch_bg_press"
+        android:gravity="center_vertical|left" />
+
+    <TextView
+        android:id="@+id/switch_off_bg_textview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/switch_bg_normal"
+        android:gravity="center_vertical|left" />
+
+    <TextView
+        android:id="@+id/switch_on_button_textview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/switch_button_press"
+        android:gravity="center_vertical|left"
+        android:paddingBottom="2dp"
+        android:paddingLeft="10dp"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/switch_off_button_textview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/switch_button_normal"
+        android:gravity="center_vertical|right"
+        android:paddingBottom="2dp"
+        android:paddingRight="10dp"
+        android:textSize="16sp" />
+
+</RelativeLayout>

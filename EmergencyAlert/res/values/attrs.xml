@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <declare-styleable name="SwitchButton">
+        <!-- Button内容以分号隔开,内容为打开与关闭(默认为on;off),打开在分号前关闭在分号后 -->
+        <attr name="onOff" format="string" />
+    </declare-styleable>
+</resources>
