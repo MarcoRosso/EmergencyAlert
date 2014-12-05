@@ -471,6 +471,7 @@
          android:layout_height="wrap_content"
          android:layout_gravity="center_horizontal"
          android:layout_marginTop="10dp"
+         android:layout_marginBottom="10dp"
          android:layout_marginLeft="10dp"
          android:layout_marginRight="10dp"  
          android:background="@drawable/settingbackground"
@@ -494,9 +495,13 @@
         android:textStyle="bold" />
       </RelativeLayout>
       <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp">
+      <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
        <Button
         android:id="@+id/showlist"
@@ -513,16 +518,15 @@
        <Button
         android:id="@+id/deletelist"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="40dp"
+        android:layout_marginRight="50dp"
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
-        android:layout_height="29dp"
+        android:layout_height="30dp"
         android:background="@drawable/normalbuttonstate"
         android:text=" 清除记录  "
         android:textColor="@drawable/bottombuttonstyle"
         android:textSize="15sp"
-        android:textStyle="bold"  /> 
-       </RelativeLayout>
+        android:textStyle="bold"  />       
         <ListView 
         android:id="@+id/alertlist"
 	    android:layout_width="fill_parent"
@@ -530,8 +534,9 @@
 	    android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
-       android:layout_marginRight="20dp"
-	/>
+       android:layout_marginRight="20dp"/>
+        </RelativeLayout>
+      </RelativeLayout>
     </LinearLayout>
    </LinearLayout>
     </ScrollView> 
