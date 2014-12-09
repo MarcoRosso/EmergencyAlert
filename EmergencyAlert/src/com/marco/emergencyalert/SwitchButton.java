@@ -110,8 +110,8 @@ public class SwitchButton extends RelativeLayout implements
 		return switchStatues;
 	}
 	
-	public void changbuttonstatues(String statues){
-		if(statues.equalsIgnoreCase("1")){
+	public void changbuttonstatues(boolean statues){
+		if(statues==true){
 			switchStatues=true;
 			setView();
 		}else{

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="330dp" >
+        <ImageView
+        android:id="@+id/logo"
+        android:layout_width="40dp" 
+        android:layout_height="40dp"
+        android:src="@drawable/logoalert"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"  />
+        <TextView
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/logo"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:singleLine="true"
+        android:text="欢迎使用紧急报警"
+        android:textColor="#D01B22"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+       <TextView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logo"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"    
+        android:text="   本软件通过对手机的温度，气压和加速度传感器的检测确定您的当前是否遇到了火灾，跌落及碰撞等紧急情况，并及时将您遇到上述紧急情况的信息以及您的位置，通过微博，短信等方式发送出去。"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+    <ImageView
+        android:id="@+id/alerticon1"
+        android:layout_below="@+id/info"
+        android:layout_alignLeft="@+id/info"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:src="@drawable/alert" />  
+      <TextView
+        android:id="@+id/tishi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/alerticon1"
+        android:layout_below="@+id/info"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"  
+        android:layout_marginLeft="5dp"  
+        android:text="您还未填写紧急联系人号码或绑定微博账号，遇到紧急情况时将无法将紧急信息发送出去。请前往紧急设置填写相关信息！"
+        android:textColor="#D01B22"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+     <ImageView
+        android:id="@+id/alerticon2"
+        android:layout_below="@+id/tishi"
+        android:layout_alignLeft="@+id/alerticon1"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:src="@drawable/alert" />  
+      <TextView
+        android:id="@+id/tishi2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/alerticon2"
+        android:layout_below="@+id/tishi"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"  
+        android:layout_marginLeft="5dp"  
+        android:text="使用本软件或开启报警服务时请保持打开网络和GPS，否则您的位置信息将无法发送！"
+        android:textColor="#D01B22"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>
