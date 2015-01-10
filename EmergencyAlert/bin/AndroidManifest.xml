@@ -16,14 +16,33 @@
 <uses-permission android:name="android.permission.WRITE_SMS" /> 
 <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
 <uses-permission android:name="android.permission.WAKE_LOCK"/>
+<uses-permission android:name="android.permission.READ_CONTACTS"/>
+<uses-permission android:name="android.permission.CAMERA"/>
+<uses-permission android:name="android.permission.GET_ACCOUNTS" />  
+<uses-permission android:name="android.permission.USE_CREDENTIALS" />  
+<uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />  
+<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />  
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />  
+<uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />  
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />  
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />  
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />  
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />  
+<uses-permission android:name="android.permission.BROADCAST_STICKY" />  
+<uses-permission android:name="android.permission.WRITE_SETTINGS" />  
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
    <application
         android:allowBackup="true"
         android:icon="@drawable/logoalert"
         android:label="@string/app_name"
         android:screenOrientation="portrait">
+            <meta-data  
+        android:name="com.baidu.lbsapi.API_KEY"  
+        android:value="dfAtD9e6ZrQMPxz4wmEoIzxZ" />  
         <activity
             android:name=".AlertActivity"
             android:label="@string/app_name" 
+            android:screenOrientation="portrait"
              >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +54,19 @@
         </service>
            <activity
              android:name=".AlertSettings"
+             android:screenOrientation="portrait"
+             />
+           <activity
+             android:name=".AlertAction"
+             android:launchMode="singleTask"
+             android:screenOrientation="portrait"
+             android:theme="@style/AppTheme_NoAnimation"
+             />
+           <activity
+             android:name=".AlertDialog"
+             android:theme="@style/AppTheme_Full" 
+             android:launchMode="singleTask"
+             android:screenOrientation="portrait"
              />
     </application>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:layout_height="330dp" >
+    android:layout_height="320dp" >
         <ImageView
         android:id="@+id/logo"
         android:layout_width="40dp" 
@@ -50,7 +50,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"  
         android:layout_marginLeft="5dp"  
-        android:text="您还未填写紧急联系人号码或绑定微博账号，遇到紧急情况时将无法将紧急信息发送出去。请前往紧急设置填写相关信息！"
+        android:text="您还未填写紧急联系人号码并打开紧急短信或绑定微博账号，遇到紧急情况时将无法将紧急信息发送出去。请前往紧急设置填写相关信息！"
         android:textColor="#D01B22"
         android:textSize="15sp"
         android:textStyle="bold" />

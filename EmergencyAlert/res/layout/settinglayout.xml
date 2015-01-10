@@ -44,12 +44,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+       <ImageView
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/instructionicon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="5dp"
         android:singleLine="true"
         android:text="使用说明 User Instruciton"
         android:textColor="#A4A4A4"
@@ -65,6 +71,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
         android:text="本软件通过对手机的温度，气压和加速度传感器的检测确定您的当前是否遇到了火灾，跌落及碰撞等紧急情况，并及时将您遇到上述紧急情况的信息以及您的位置，通过微博，短信等方式发送出去。\n*根据手机型号的不同，温度及气压可能无法监测。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
@@ -85,12 +93,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+        <ImageView
+        android:id="@+id/serviceicon"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
+        android:src="@drawable/serviceicon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" 
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/serviceicon"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
@@ -116,12 +133,196 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"
-        android:text="强烈建议您打开此服务，这样程序在后台运行时就可以及时发送报警信息，当然这会导致在没有协处理器的手机上耗电增加。\n*如果没有打开，程序退出后所有报警功能将失效。"
+         android:layout_marginRight="1dp"
+         android:layout_marginLeft="1dp"
+        android:text="强烈建议您打开此服务，这样程序在前后台运行时就可以及时发送报警信息，当然这会导致在没有协处理器的手机上耗电增加。\n*如果没有打开，所有报警功能将失效。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
         android:textStyle="bold" />    
        </LinearLayout>
     </LinearLayout>
+    <LinearLayout
+         android:id="@+id/yuzhisettingpart"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         android:layout_marginTop="10dp"
+         android:layout_marginLeft="10dp"
+         android:layout_marginRight="10dp"  
+         android:background="@drawable/settingbackground"
+         android:orientation="vertical" >
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/settingtitle">
+       <ImageView
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/yuzhiicon" />
+        <TextView
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:singleLine="true"
+        android:text="报警阈值Alert Threshold"
+        android:textColor="#A4A4A4"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+       </LinearLayout>
+      <LinearLayout
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp">
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
+        android:text="在下方设置报警阈值，当传感器数值大于这个值时报警功能将启动。拖动滑块至最右即为关闭此类报警。"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />    
+       </LinearLayout>
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">"
+        <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp">"
+       <TextView
+        android:id="@+id/name1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="1dp"
+        android:text="温度"
+        android:textColor="#A4A4A4"
+        android:textSize="18sp"
+        android:textStyle="bold" /> 
+       <SeekBar
+          android:id="@+id/temperaturesettingseekbar"
+          android:layout_alignTop="@+id/name1"
+          android:layout_toRightOf="@+id/name1"
+          android:layout_toLeftOf="@+id/temperaturenumber"
+          android:layout_alignLeft="@+id/altitudesettingseekbar"
+          android:layout_marginTop="3dp"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:progressDrawable="@drawable/seekbar_setting"
+		  android:thumb="@drawable/thumb" /> 
+        <TextView
+        android:id="@+id/temperaturenumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="1dp"
+        android:text="80℃"
+        android:textColor="#A4A4A4"
+        android:textSize="18sp"
+        android:textStyle="bold" />    
+
+       <TextView
+        android:id="@+id/name2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name1"
+        android:layout_alignLeft="@+id/name1"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="1dp"
+        android:text="高度变化"
+        android:textColor="#A4A4A4"
+        android:textSize="18sp"
+        android:textStyle="bold" /> 
+        <TextView
+        android:id="@+id/altitudenote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name2"
+        android:layout_alignRight="@+id/name2"
+        android:text="（在0.5秒内）"
+        android:textColor="#A4A4A4"
+        android:textSize="10sp"
+        android:textStyle="bold" />    
+       <SeekBar
+          android:id="@+id/altitudesettingseekbar"
+          android:layout_alignTop="@+id/name2"
+          android:layout_toRightOf="@+id/name2"
+          android:layout_toLeftOf="@+id/altitudenumber"
+          android:layout_marginTop="10dp"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:progressDrawable="@drawable/seekbar_setting"
+		  android:thumb="@drawable/thumb" /> 
+        <TextView
+        android:id="@+id/altitudenumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/temperaturenumber"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="20dp"
+        android:text="关闭"
+        android:textColor="#A4A4A4"
+        android:textSize="18sp"
+        android:textStyle="bold" />    
+       <TextView
+        android:id="@+id/name3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/altitudenote"
+        android:layout_alignLeft="@+id/name2"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="1dp"
+        android:text="加速度"
+        android:textColor="#A4A4A4"
+        android:textSize="18sp"
+        android:textStyle="bold" /> 
+       <SeekBar
+          android:id="@+id/accsettingseekbar"
+          android:layout_alignTop="@+id/name3"
+          android:layout_toRightOf="@+id/name3"
+          android:layout_toLeftOf="@+id/accnumber"
+          android:layout_alignLeft="@+id/altitudesettingseekbar"
+          android:layout_marginTop="3dp"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:progressDrawable="@drawable/seekbar_setting"
+		  android:thumb="@drawable/thumb" /> 
+        <TextView
+        android:id="@+id/accnumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/altitudenumber"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="1dp"
+        android:text="30m/s^2"
+        android:textColor="#A4A4A4"
+        android:textSize="18sp"
+        android:textStyle="bold" />    
+        </RelativeLayout>
+        </LinearLayout>
+        </LinearLayout>
         <LinearLayout
          android:id="@+id/soundsettingpart"
          android:layout_width="match_parent"
@@ -136,12 +337,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+        <ImageView
+        android:id="@+id/alertsoundicon"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
+        android:src="@drawable/alertsoundicon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" 
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/alertsoundicon"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
@@ -167,6 +377,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
         android:text="开启此项，发生紧急情况时到您对手机有任何操作前，手机扬声器将以最大音量播放报警声音。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
@@ -187,12 +399,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+        <ImageView
+        android:id="@+id/lightdicon"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
+        android:src="@drawable/lighticon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true" 
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/lightdicon"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
@@ -218,6 +439,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
         android:text="开启此项，发生紧急情况时到您对手机有任何操作前，如果您的手机光线传感器显示您处在亮度低的地方，手机屏幕及闪光灯（如果有）将不断闪烁。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
@@ -238,12 +461,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+        <ImageView
+        android:id="@+id/addressicon"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
+        android:src="@drawable/addressicon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" 
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/addressicon"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
@@ -269,6 +501,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"
+       android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
         android:text="开启此项，您的GPS坐标信息将会通过百度地图服务转化为地址，出现紧急情况时使紧急联系人更直观的获得您的位置，当然，它只会在您连接互联网时工作并消耗少量流量。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
@@ -289,19 +523,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+       <ImageView
+        android:id="@+id/contacticon"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
+        android:src="@drawable/contacticon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" 
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/contacticon"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
-        android:text="紧急联系人Emergency Contact"
+        android:text="紧急短信Emergency SMS"
         android:textColor="#A4A4A4"
         android:textSize="20sp"
         android:textStyle="bold" />
+      <com.marco.emergencyalert.SwitchButton
+        android:id="@+id/smswitch"
+        android:layout_centerVertical="true"  
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"    
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        attr:onOff="ON;OFF" />
       </RelativeLayout>
         <LinearLayout
         android:layout_width="wrap_content"
@@ -312,7 +563,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"
-        android:text="请在下方填写至少一个联系人号码，按搜索按钮可从通讯录导入，您遇到紧急情况时您的位置信息将短信发送给这些号码，在发送前有10秒的取消时间。\n*每次修改完请务必点击确认修改按钮。"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
+        android:text="请在下方填写至少一个联系人号码，按搜索按钮可从通讯录导入，您遇到紧急情况时您的位置信息将短信发送给这些号码，在发送前有10秒的取消时间。\n*每次修改完请务必点击保存号码按钮。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
         android:textStyle="bold" />
@@ -320,9 +573,11 @@
       <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="20dp">
         <EditText
         android:id="@+id/contactnumber1"
+        android:numeric="integer"  
+        android:paddingLeft="10dp"
         android:layout_width="200dp"
         android:layout_height="30dp"
         android:layout_marginTop="1dp"
@@ -334,14 +589,17 @@
         android:layout_marginTop="2dp"
         android:layout_width="35dp"
         android:layout_height="29dp"
-        android:background="@drawable/addcontact"  /> 
+        android:background="@drawable/addcontact"
+          /> 
        </LinearLayout>
        <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="20dp">
         <EditText
         android:id="@+id/contactnumber2"
+        android:numeric="integer"  
+        android:paddingLeft="10dp"
         android:layout_width="200dp"
         android:layout_height="30dp"
         android:layout_marginTop="2dp"
@@ -354,16 +612,18 @@
         android:layout_marginTop="2dp"
         android:layout_width="35dp"
         android:layout_height="29dp"
-        android:background="@drawable/addcontact"  /> 
+        android:background="@drawable/addcontact"
+          /> 
        <Button
         android:id="@+id/contactnumberconfirm"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="29dp"
         android:background="@drawable/normalbuttonstate"
-        android:text="确认修改"
+        android:text="保存号码"
+        android:padding="5dp"
         android:textColor="@drawable/bottombuttonstyle"
         android:textSize="15sp"
         android:textStyle="bold"  /> 
@@ -371,10 +631,12 @@
        <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginBottom="5dp">
         <EditText
         android:id="@+id/contactnumber3"
+        android:numeric="integer"  
+        android:paddingLeft="10dp"
         android:layout_width="200dp"
         android:layout_height="30dp"
         android:layout_marginTop="2dp"
@@ -386,7 +648,8 @@
         android:layout_marginTop="3dp"
         android:layout_width="35dp"
         android:layout_height="29dp"
-        android:background="@drawable/addcontact"  /> 
+        android:background="@drawable/addcontact"
+          /> 
        </LinearLayout>
     </LinearLayout>
           <LinearLayout
@@ -403,12 +666,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+        <ImageView
+        android:id="@+id/weiboicon"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
+        android:src="@drawable/weiboicon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true" 
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/weiboicon"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
@@ -426,6 +698,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
         android:text="您可以绑定微博账号来发送报警信息，当然它只会在您连接互联网时工作并消耗少量流量。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
@@ -480,12 +754,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
+       <ImageView
+        android:id="@+id/recordicon"
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp" 
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
+        android:src="@drawable/recordicon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" 
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/recordicon"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
@@ -510,8 +793,9 @@
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
+        android:padding="5dp"
         android:background="@drawable/normalbuttonstate"
-        android:text=" 显示记录  "
+        android:text="显示记录"
         android:textColor="@drawable/bottombuttonstyle"
         android:textSize="15sp"
         android:textStyle="bold"  /> 
@@ -522,8 +806,9 @@
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
+        android:padding="5dp"
         android:background="@drawable/normalbuttonstate"
-        android:text=" 清除记录  "
+        android:text="清除记录 "
         android:textColor="@drawable/bottombuttonstyle"
         android:textSize="15sp"
         android:textStyle="bold"  />       
@@ -559,11 +844,11 @@
    <Button
         android:id="@+id/configbottom"
         android:text="报警设置"
-        android:textColor="@drawable/bottombuttonstyle"
+        android:textColor="#D01B22"
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/configbottombuttonstate"
+        android:background="@drawable/rightbutton_pressed"
         />  
         </LinearLayout>
 

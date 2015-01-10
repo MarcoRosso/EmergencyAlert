@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center" >
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:layout_height="330dp" >
+    android:layout_height="355dp" 
+    android:background="@drawable/weibobackground">
         <ImageView
         android:id="@+id/logo"
         android:layout_width="40dp" 
@@ -23,24 +28,34 @@
         android:textSize="25sp"
         android:textStyle="bold" />
        <TextView
-        android:id="@+id/alerttype"
+        android:id="@+id/alertword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/logo"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"    
-        android:text="紧急报警监测到您可能发生了撞击。"
+        android:text="紧急报警监测到您可能发生了"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
+        android:textStyle="bold" />
+       <TextView
+        android:id="@+id/alerttype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/alertword"
+        android:layout_alignBottom="@+id/alertword"
+        android:text="撞击！"
+        android:textColor="#D01B22"
+        android:textSize="20sp"
         android:textStyle="bold" />
       <TextView
         android:id="@+id/gps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/alerttype"
+        android:layout_below="@+id/alertword"
         android:layout_marginTop="5dp"
-        android:layout_alignLeft="@+id/alerttype"
+        android:layout_alignLeft="@+id/alertword"
         android:text="您的GPS坐标是："
         android:textColor="#A4A4A4"
         android:textSize="15sp"
@@ -86,15 +101,27 @@
         android:layout_alignLeft="@+id/address"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
-        android:text="如果您未点击取消，报警功能将启动，报警信息和您的坐标及地址将在以下时间后短信发给您输入的号码并使用绑定的微博账号发送微博。"       
+        android:text="若您未点击取消报警，报警功能将启动。"
+        android:textColor="#A4A4A4"
+        android:textSize="15sp"
+        android:textStyle="bold" />  
+     <TextView
+        android:id="@+id/cancealstatement2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cancealstatement"
+        android:layout_alignLeft="@+id/cancealstatement"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:text="若您打开了紧急短信，报警信息和您的坐标及地址将在以下时间后短信发给您输入的号码并使用绑定的微博账号发送微博。"       
         android:textColor="#A4A4A4"
         android:textSize="15sp"
         android:textStyle="bold" />   
          <SeekBar
           android:id="@+id/countdownseekbar"
-          android:layout_below="@+id/cancealstatement"
-          android:layout_alignLeft="@+id/cancealstatement"
-          android:layout_marginTop="5dp"
+          android:layout_below="@+id/cancealstatement2"
+          android:layout_alignLeft="@+id/cancealstatement2"
+          android:layout_marginTop="15dp"
           android:layout_width="230dp"
           android:layout_height="wrap_content"
           android:progressDrawable="@drawable/seekbar_img"
@@ -105,7 +132,9 @@
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/countdownseekbar"
-        android:layout_below="@+id/cancealstatement"
+        android:layout_below="@+id/cancealstatement2"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="5dp"
         android:singleLine="true"
         android:text="10秒"
         android:textColor="#D01B22"
@@ -116,13 +145,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="50dp"
         >
         <Button 
         android:id="@+id/confirm"
-        android:text="立即发送"
-        android:padding="5dp"
+        android:text="立即报警"
+        android:padding="10dp"
         android:textColor="@drawable/bottombuttonstyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -131,8 +161,8 @@
         />
         <Button
         android:id="@+id/cancel"
-        android:text="取消发送"
-        android:padding="5dp"
+        android:text="取消报警"
+        android:padding="10dp"
         android:textColor="@drawable/bottombuttonstyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -141,3 +171,4 @@
         />    
          </LinearLayout>
 </RelativeLayout>
+</LinearLayout>

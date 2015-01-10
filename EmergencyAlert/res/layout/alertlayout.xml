@@ -283,10 +283,9 @@
         android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="3dp"
         android:text="Unavailable"
         android:textColor="#A4A4A4"
-        android:singleLine="true"
         android:textSize="15sp"/>   
         </LinearLayout>
        </LinearLayout>
@@ -302,11 +301,11 @@
    <Button 
         android:id="@+id/alertbottom"
         android:text="报警状态"
-        android:textColor="@drawable/bottombuttonstyle"
+        android:textColor="#D01B22"
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/alertbottombuttonstate"
+        android:background="@drawable/leftbutton_pressed"
         />  
    <Button
         android:id="@+id/configbottom"

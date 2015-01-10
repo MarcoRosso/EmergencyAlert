@@ -14,6 +14,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,9 +27,17 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
 
-public class AlertService extends Service implements LocationListener{
+public class AlertService extends Service implements LocationListener,OnGetGeoCoderResultListener{
 	private SensorManager sensorManager;
 	private LocationManager locationManager;
 	private NotificationManager manager;
@@ -37,21 +46,28 @@ public class AlertService extends Service implements LocationListener{
 	private float pastAltitude=0;
 	private float currentTemperature ;
 	private float[] gravity={0,0,0};
-	float pasttem[] = new float[16];
+	float pasttem[] = new float[30];
 	float accvalues[]=new float[3];
-	int i=0;
-	int j=0;
+	private int i=0;
+	private int acccounter=0;
 	int temalertcounter;
 	int type;
 	int progressStatus = 0;
-	private boolean runatfirsttime=true;
+	private boolean accavoidshake=true;
+	private boolean baiduable=true;
+	private float maxtemperature;
+	private float maxaltitude;
+	private float maxacc;
 	private String latitude= null;
 	private String longitude= null;
+	private String address=null;
 	Timer t = new Timer();
-	private static final float maxtemperature=30;
-	private static final float maxaltitude=(float) 1.1;
-	private static final float maxacc=(float)8.0;
-	private static final float ALPHA = 0.8f;  
+	private boolean temperatureable=true;
+	private boolean altitudeable=true;
+	private boolean accable=true;
+	private static final float ALPHA = 0.8f;
+	SharedPreferences preferences;
+	GeoCoder mSearch = null;
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -59,8 +75,26 @@ public class AlertService extends Service implements LocationListener{
 	}
 	 public void onCreate() {
 	        super.onCreate();
+	        SDKInitializer.initialize(getApplicationContext());
 	        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 	        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+	        
+	        preferences = getSharedPreferences("setting", MODE_PRIVATE);
+			baiduable=preferences.getBoolean("baidusetting", true);
+			if(!baiduable) address="请在设置中打开 获取地址 功能";
+	        int temperaturesetting=preferences.getInt("temperaturesetting", 50);
+	        if(temperaturesetting==100) temperatureable=false;
+	        else maxtemperature=(float) (30+temperaturesetting*0.4);
+	        int altitudesetting=preferences.getInt("altitudesetting", 28);
+	        if(altitudesetting==100) altitudeable=false;
+	        else maxaltitude=(float) (altitudesetting*2.5/100+0.50);
+	        int accsetting=preferences.getInt("accsetting",40);
+	        if(accsetting==100) accable=false;
+	        else  maxacc=(float) (accsetting*0.25+5);
+	        
+			mSearch = GeoCoder.newInstance();
+			mSearch.setOnGetGeoCodeResultListener(this);
+			
 	        Timer updateTimer = new Timer("UpdateTemperature");
 	        updateTimer.scheduleAtFixedRate(new TimerTask() {
 	          public void run() {  	  
@@ -98,8 +132,8 @@ public class AlertService extends Service implements LocationListener{
 	              if (enabledProviders.isEmpty()
 	                      || !enabledProviders.contains(LocationManager.GPS_PROVIDER)||
 	                          !enabledProviders.contains(LocationManager.NETWORK_PROVIDER))
-	              {      latitude="Unavailable";
-	                     longitude="Unavailable";            	  
+	              {      latitude="请在设置中打开GPS";
+	                     longitude="请在设置中打开GPS";            	  
 	              }
 	              else
 	              { 
@@ -111,6 +145,20 @@ public class AlertService extends Service implements LocationListener{
 	                  mCriteria01.setPowerRequirement(Criteria.POWER_LOW);   
 	                  String bestLocationProvider =    
 	                  locationManager.getBestProvider(mCriteria01, true);
+	                  Location pastLocation = locationManager.getLastKnownLocation   
+	                	      (bestLocationProvider); 
+	                  if ((pastLocation== null))
+	              	{latitude="无数据，正在定位.......";
+	                 longitude="无数据，正在定位.......";
+	              	}            	
+	              else
+	              	{latitude=String.valueOf(pastLocation.getLatitude());
+	                  longitude=String.valueOf(pastLocation.getLongitude());
+	                  if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitude)), 
+	                		   (Float.valueOf(longitude)));
+	      			mSearch.reverseGeoCode(new ReverseGeoCodeOption()
+	  				.location(ptCenter));}
+	              	}
 	          		  locationManager.requestLocationUpdates(bestLocationProvider,
 	                          1000,0,this,null);
 	              }
@@ -124,13 +172,14 @@ public class AlertService extends Service implements LocationListener{
          notification.tickerText=getText(R.string.app_name);
          notification.when=System.currentTimeMillis();
          CharSequence contentTitle = getText(R.string.app_name);
-         CharSequence contentText =  getText(R.string.serviceinfo);
-         Intent intent1 = new Intent(AlertService.this, MainActivity.class);
+         CharSequence contentText =  "紧急报警正在后台运行";
+         Intent intent1 = new Intent(AlertService.this, AlertActivity.class);
          PendingIntent contentIntent = PendingIntent.getActivity(AlertService.this, 0, intent1, Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
          notification.setLatestEventInfo(AlertService.this, contentTitle, contentText, contentIntent);
          notification.flags=Notification.FLAG_NO_CLEAR;
          manager.notify(0, notification);
-         runatfirsttime=true;
+         accavoidshake=true;
+         acccounter=0;
          acquireWakeLock();
 		 return startId;
 	 }
@@ -154,17 +203,18 @@ public class AlertService extends Service implements LocationListener{
    };
    private void updatetemperature() {
            if (!Float.isNaN(currentTemperature)) {          
-             if (i==16) 
+             if (i==29) 
            	  i=0;
              else
              {pasttem[i]=currentTemperature;
              i++;}
-         for (int j=0; j<=pasttem.length;j++);
+         for (int j=0; j<pasttem.length;j++)
          { if (pasttem[j]>=maxtemperature)
        	   {temalertcounter++;
-              if (temalertcounter>10)
-           	   {type=0; 
-                  alert(type);}
+              if (temalertcounter>25&&temperatureable)
+           	      {type=0; 
+                  alert(type);
+                }
        	   }       
         }}
      }
@@ -185,7 +235,7 @@ public class AlertService extends Service implements LocationListener{
 				     SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE,pastAltitude);
 				    pastAltitude=currentAltitude;				
 					} else pastAltitude=currentAltitude;
-                  if (altitudeDifference>=maxaltitude)	{
+                  if (altitudeDifference>=maxaltitude&&altitudeable)	{
                	   type=1;
                	   alert(type);             	   
                   }
@@ -199,12 +249,14 @@ public class AlertService extends Service implements LocationListener{
        	 double acceleration = Math.sqrt(sumOfSquares);
        	 DecimalFormat df = new DecimalFormat("########.0000");
        	 acceleration = Double.parseDouble(df.format(acceleration));
-       	 if (acceleration>=maxacc&&!runatfirsttime)
+       	 if (acceleration>=maxacc&&!accavoidshake&&accable)
        	 {
        		 type=2;
        		 alert(type);
        	 }
-       	runatfirsttime=false;
+       	acccounter++;
+   	     if (acccounter>3)
+   	      accavoidshake=false;
    }
    public void onDestroy() {
          sensorManager.unregisterListener(tempSensorEventListener);
@@ -216,16 +268,15 @@ public class AlertService extends Service implements LocationListener{
          super.onDestroy();
      }
      public void alert (int typein){
-    	 Intent intent1 = new Intent();
-    	 intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);   
-    	 intent1.setClass(AlertService.this, MainActivity.class); 
-    	 startActivity(intent1);
-    	 Intent intent2 = new Intent();
-         intent2.putExtra("type", typein);
-         intent2.putExtra("latitude", latitude);
-         intent2.putExtra("latitude", longitude);
-         intent2.setAction("com.marco.AlertService");
-         sendBroadcast(intent2);
+    	 for (int k=0; k<pasttem.length;k++)  pasttem[k]=0;
+     	Intent intent  = new Intent();
+     	intent.putExtra("type", typein);
+     	intent.putExtra("latitude", latitude);
+     	intent.putExtra("longitude", longitude);
+     	intent.putExtra("address", address);
+     	intent.setClass(AlertService.this,AlertDialog.class);
+   	    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+     	startActivity(intent);
    }
 
    private float[] highPass(float x, float y, float z)
@@ -269,6 +320,10 @@ public void onLocationChanged(Location location) {
 	// TODO Auto-generated method stub
 	latitude=String.valueOf(location.getLatitude());
 	longitude=String.valueOf(location.getLongitude());
+    if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitude)), 
+ 		   (Float.valueOf(longitude)));
+	mSearch.reverseGeoCode(new ReverseGeoCodeOption()
+	.location(ptCenter));}
 }
 @Override
 public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -284,6 +339,19 @@ public void onProviderEnabled(String provider) {
 public void onProviderDisabled(String provider) {
 	// TODO Auto-generated method stub
 	
+}
+@Override
+public void onGetGeoCodeResult(GeoCodeResult arg0) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+	// TODO Auto-generated method stub
+	if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+        address="无法找到相应地址";
+			return;
+		}  address=result.getAddress();
 }  
 }
 

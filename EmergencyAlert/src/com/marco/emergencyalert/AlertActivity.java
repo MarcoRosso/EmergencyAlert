@@ -7,12 +7,27 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+
+
+
+
 
 import android.app.Activity;
+import android.app.ActivityManager;
 
 import android.app.Dialog;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -39,7 +54,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class AlertActivity extends Activity implements LocationListener {
+public class AlertActivity extends Activity implements LocationListener, OnGetGeoCoderResultListener {
 	  private Button alertbottom;
 	  private Button configbottom;
 	  private SensorManager sensorManager;
@@ -49,32 +64,45 @@ public class AlertActivity extends Activity implements LocationListener {
 	  private TextView accTextView;
 	  private TextView latitudeTextView;
 	  private TextView longitudeTextView;
+	  private TextView addressTextView;
 	  private ImageView temperaturealert;
 	  private ImageView altitudealert;
 	  private ImageView accalert;
 	  private float currentAltitude;
 	  private float pastAltitude=0;
 	  private float[] gravity={0,0,0};
-	  private float pasttem[] = new float[16];
+	  private float pasttem[] = new float[50];
 	  private float accvalues[]=new float[3];
 	  private float currentTemperature ;
 	  private long exitTime = 0;
 	  private boolean accavoidshake=true;
-	  private static final float maxtemperature=50;
-	  private static final float maxaltitude=(float) 1.1;
-	  private static final float maxacc=(float)8.0;
+	  private float maxtemperature;
+	  private float maxaltitude;
+	  private float maxacc;
 	  private static final float ALPHA = 0.8f;
 	  private int i=0;
 	  private int acccounter=0;
 	  private int zerocounter=0;
 	  private int temalertcounter;
-      Timer updateTimer = new Timer("UpdateTemperature");
-      Timer updateTimer1 = new Timer("updatealtitude");
-      Timer updateTimer2 = new Timer("updateaccelerator");
-	
+	  private String bestLocationProvider;
+	  private boolean temalertsent=false;
+	  private boolean servicesetting;
+	  private boolean temperatureable=true;
+	  private boolean altitudeable=true;
+	  private boolean accable=true;
+	  private boolean baiduable=true;
+	  SharedPreferences preferences;
+      GeoCoder mSearch = null;
+
+      
+      
+      
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.alertlayout);
+        preferences = getSharedPreferences("setting", MODE_PRIVATE);
+        servicesetting = preferences.getBoolean("servicesetting",true);
         alertbottom=(Button)findViewById(R.id.alertbottom);
         configbottom=(Button)findViewById(R.id.configbottom);
         
@@ -86,6 +114,7 @@ public class AlertActivity extends Activity implements LocationListener {
         accalert=(ImageView)findViewById(R.id.accalert);
         altitudeTextView=(TextView)findViewById(R.id.altitudechanged);
         accTextView=(TextView)findViewById(R.id.accnow);
+        addressTextView=(TextView)findViewById(R.id.address);
         
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -94,19 +123,34 @@ public class AlertActivity extends Activity implements LocationListener {
         altitudealert.setVisibility(View.INVISIBLE);
         accalert.setVisibility(View.INVISIBLE);
         
-
+		mSearch = GeoCoder.newInstance();
+		mSearch.setOnGetGeoCodeResultListener(this);
+        
+		baiduable=preferences.getBoolean("baidusetting", true);
+		if(!baiduable) addressTextView.setText("请在设置中打开 获取地址 功能");
+        int temperaturesetting=preferences.getInt("temperaturesetting", 50);
+        if(temperaturesetting==100) temperatureable=false;
+        else maxtemperature=(float) (30+temperaturesetting*0.4);
+        int altitudesetting=preferences.getInt("altitudesetting", 28);
+        if(altitudesetting==100) altitudeable=false;
+        else maxaltitude=(float) (altitudesetting*2.5/100+0.50);
+        int accsetting=preferences.getInt("accsetting",40);
+        if(accsetting==100) accable=false;
+        else  maxacc=(float) (accsetting*0.25+5);
+        
+        Timer updateTimer = new Timer("UpdateTemperature");
         updateTimer.scheduleAtFixedRate(new TimerTask() {
           public void run() {  	  
         	updatetemperature();      
           }
-        }, 0, 1000);
-
+        }, 0, 500);
+        Timer updateTimer1 = new Timer("updatealtitude");
         updateTimer1.scheduleAtFixedRate(new TimerTask() {
           public void run() {  	  
         	updatealtitude();      
           }
         }, 0, 500);
-
+        Timer updateTimer2 = new Timer("updateaccelerator");
         updateTimer2.scheduleAtFixedRate(new TimerTask() {
           public void run() {  	  
         	updateaccelerator();      
@@ -118,16 +162,33 @@ public class AlertActivity extends Activity implements LocationListener {
 			public void onClick(View v) {
 				startActivity(new Intent (AlertActivity.this, AlertSettings.class));
         		finish();	
-        		 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);  
+        		overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);  
 			}      	
         });
-        final Dialog dialog = new Dialog(AlertActivity.this, R.style.MyDialog);
+        
+		String contact1=preferences.getString("contact1", "");
+		String contact2=preferences.getString("contact2", "");
+		String contact3=preferences.getString("contact3", "");
+		int count=0;
+		if(contact1!=null&&!contact1.equals("")) count++;
+		if(contact2!=null&&!contact2.equals("")) count++;
+		if(contact3!=null&&!contact3.equals("")) count++;
+        List<String> enabledProviders = locationManager.getProviders(true);
+        if (enabledProviders.isEmpty()
+                || !enabledProviders.contains(LocationManager.GPS_PROVIDER)||
+                    !enabledProviders.contains(LocationManager.NETWORK_PROVIDER)||count==0){
+        final Dialog dialog = new Dialog(AlertActivity.this, R.style.MyDialogOutside);
         dialog.setContentView(R.layout.fisrtrundialog);
-        dialog.show();
+        dialog.show();}
 	}
     protected void onResume() {
         super.onResume();
-        alertbottom.setPressed(true);
+        Intent intent= new Intent();
+        intent.setClass(AlertActivity.this, AlertService.class);
+    	stopService(intent);
+        for (int j=0; j<pasttem.length;j++)  pasttem[j]=0;
+        i=0;
+        temalertsent=false;
         alertbottom.setClickable(false);
         Sensor temperatureSensor =
           sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
@@ -144,7 +205,6 @@ public class AlertActivity extends Activity implements LocationListener {
                 SensorManager.SENSOR_DELAY_NORMAL);
           else{
        	   altitudeTextView.setText("无数据或您的设备不支持");
-       	   updateTimer2.cancel();
           }
         Sensor AcceleratorSensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             sensorManager.registerListener(accSensorEventListener, 
@@ -166,7 +226,7 @@ public class AlertActivity extends Activity implements LocationListener {
             mCriteria01.setBearingRequired(false);   
             mCriteria01.setCostAllowed(true);   
             mCriteria01.setPowerRequirement(Criteria.POWER_HIGH);   
-            String bestLocationProvider =    
+            bestLocationProvider =    
             locationManager.getBestProvider(mCriteria01, true);
             Location pastLocation = locationManager.getLastKnownLocation   
             	      (bestLocationProvider); 
@@ -177,6 +237,10 @@ public class AlertActivity extends Activity implements LocationListener {
             else
             	{latitudeTextView.setText(String.valueOf(pastLocation.getLatitude()));
                 longitudeTextView.setText(String.valueOf(pastLocation.getLongitude()));
+    			if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitudeTextView.getText()
+    					.toString())), (Float.valueOf(longitudeTextView.getText().toString())));
+    			mSearch.reverseGeoCode(new ReverseGeoCodeOption()
+				.location(ptCenter));}
             	}
     		locationManager.requestLocationUpdates(bestLocationProvider,
                     1000,0,this,null);          
@@ -184,6 +248,7 @@ public class AlertActivity extends Activity implements LocationListener {
     	accavoidshake=true;
     	acccounter=0;
     }
+    
     protected void onPause() {
         sensorManager.unregisterListener(tempSensorEventListener);
         sensorManager.unregisterListener(altiSensorEventListener);
@@ -191,11 +256,14 @@ public class AlertActivity extends Activity implements LocationListener {
         locationManager.removeUpdates(this);
         super.onPause();
       }
+    protected void onDestory(){
+    	mSearch.destroy();
+    	super.onDestroy();
+    }
 	   private final SensorEventListener tempSensorEventListener = new SensorEventListener() {
 	        public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 	        public void onSensorChanged(SensorEvent event) {
 	          currentTemperature = event.values[0];
-
 	        }
 	    };
 	    private final SensorEventListener altiSensorEventListener = new SensorEventListener() {
@@ -216,7 +284,7 @@ public class AlertActivity extends Activity implements LocationListener {
     	public void run() {
             if (!Float.isNaN(currentTemperature)) {
               temperatureTextView.setText(currentTemperature + "℃");
-              if (i==16) 
+              if (i==49) 
             	  i=0;
               else
               {pasttem[i]=currentTemperature;
@@ -224,20 +292,26 @@ public class AlertActivity extends Activity implements LocationListener {
           for (int j=0; j<pasttem.length;j++)
           { if (pasttem[j]>=maxtemperature)
         	   {temalertcounter++;
-               if (temalertcounter>10)
+               if (temalertcounter>45)
             	   {temalertcounter=0;
+            	   if(!temalertsent&&temperatureable){
             	   int type=0; 
-                   alert(type);}
+                   alert(type);
+                   if(servicesetting)
+                   temalertsent=true;}
+            	   }
         	   }
-           if(pasttem[j]==0.0){
-        	   zerocounter++;
-        	   if (zerocounter>10){
-        		   zerocounter=0;
-        		   temperatureTextView.setText("无数据或您的设备不支持");
-        	   }
-           }
          }
-          }         
+          for(int k=0;k<10;k++){
+          if(pasttem[k]==0.0){
+       	   zerocounter++;
+       	   if (zerocounter>10){
+       		   zerocounter=0;
+       		   temperatureTextView.setText("无数据或您的设备不支持");
+       	   }}
+          }
+         }
+          
         }       
         });
       }
@@ -262,7 +336,7 @@ public class AlertActivity extends Activity implements LocationListener {
 				    altitudeTextView.setText(Float.toString(altitudeDifference)+"m");
 				    pastAltitude=currentAltitude;				
 					} else pastAltitude=currentAltitude;
-                   if (altitudeDifference>=maxaltitude)	{
+                   if (altitudeDifference>=maxaltitude&&altitudeable)	{
                 	   int type=1;
                 	   alert(type);             	   
                    }
@@ -281,7 +355,7 @@ public class AlertActivity extends Activity implements LocationListener {
         	 DecimalFormat df = new DecimalFormat("########.0000");
         	 acceleration = Double.parseDouble(df.format(acceleration));
         	 accTextView.setText(Double.toString(acceleration)+"m/s^2");
-        	 if (acceleration>=maxacc&&!accavoidshake)
+        	 if (acceleration>=maxacc&&!accavoidshake&&accable)
         	 {
         		 int type=2;
         		 alert(type);
@@ -307,7 +381,14 @@ public class AlertActivity extends Activity implements LocationListener {
         return filteredValues;
     }
     public void alert (int typein){
-
+    	if(servicesetting){
+    	Intent intent  = new Intent();
+    	intent.putExtra("type", typein);
+    	intent.putExtra("latitude", latitudeTextView.getText().toString());
+    	intent.putExtra("longitude", longitudeTextView.getText().toString());
+    	intent.putExtra("address", addressTextView.getText().toString());
+    	intent.setClass(AlertActivity.this,AlertDialog.class);
+    	startActivity(intent);}else{
     	switch(typein){
     	case 0: final Animation alpha=AnimationUtils.loadAnimation(this,R.anim.anim_alpha);
     		    temperaturealert.setVisibility(View.VISIBLE);
@@ -343,7 +424,7 @@ public class AlertActivity extends Activity implements LocationListener {
 					public void onAnimationRepeat(Animation animation) {	}    	
     	        });
     	        break;
-    	}
+    	}}
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -352,6 +433,8 @@ public class AlertActivity extends Activity implements LocationListener {
                 Toast.makeText(getApplicationContext(), "再按一次退出", Toast.LENGTH_SHORT).show();                                
                 exitTime = System.currentTimeMillis();   
             } else {
+        		if(!isMyServiceRunning()&&servicesetting)
+        	    	startService(new Intent(this, AlertService.class));	
                finish();
             }
             return true;   
@@ -361,26 +444,27 @@ public class AlertActivity extends Activity implements LocationListener {
     
 	@Override
 	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
 		latitudeTextView.setText(String.valueOf(location.getLatitude()));
 		longitudeTextView.setText(String.valueOf(location.getLongitude()));
+		if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitudeTextView.getText()
+				.toString())), (Float.valueOf(longitudeTextView.getText().toString())));
+		mSearch.reverseGeoCode(new ReverseGeoCodeOption()
+		.location(ptCenter));}
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
+	}
 	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-		
+		locationManager.requestLocationUpdates(bestLocationProvider,
+                1000,0,this,null);  
+		latitudeTextView.setText("无数据，正在定位.......");
+        longitudeTextView.setText("无数据，正在定位.......");
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
 		if (provider.isEmpty()
                 || !provider.contains(LocationManager.GPS_PROVIDER)||
                     !provider.contains(LocationManager.NETWORK_PROVIDER))
@@ -389,4 +473,27 @@ public class AlertActivity extends Activity implements LocationListener {
     		longitudeTextView.setText("请在设置中打开GPS");
         }
 	}
+	private boolean isMyServiceRunning() {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if ("com.marco.AlertService".equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	@Override
+	public void onGetGeoCodeResult(GeoCodeResult arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+		// TODO Auto-generated method stub
+		if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+           addressTextView.setText("无法找到相应地址");
+			return;
+		}  addressTextView.setText(result.getAddress());
+	}
+
 }
