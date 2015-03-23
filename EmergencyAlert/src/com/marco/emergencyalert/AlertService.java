@@ -81,7 +81,7 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
 	        
 	        preferences = getSharedPreferences("setting", MODE_PRIVATE);
 			baiduable=preferences.getBoolean("baidusetting", true);
-			if(!baiduable) address="ÇëÔÚÉèÖÃÖĞ´ò¿ª »ñÈ¡µØÖ· ¹¦ÄÜ";
+			if(!baiduable) address="è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€ è·å–åœ°å€ åŠŸèƒ½";
 	        int temperaturesetting=preferences.getInt("temperaturesetting", 50);
 	        if(temperaturesetting==100) temperatureable=false;
 	        else maxtemperature=(float) (30+temperaturesetting*0.4);
@@ -132,8 +132,8 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
 	              if (enabledProviders.isEmpty()
 	                      || !enabledProviders.contains(LocationManager.GPS_PROVIDER)||
 	                          !enabledProviders.contains(LocationManager.NETWORK_PROVIDER))
-	              {      latitude="ÇëÔÚÉèÖÃÖĞ´ò¿ªGPS";
-	                     longitude="ÇëÔÚÉèÖÃÖĞ´ò¿ªGPS";            	  
+	              {      latitude="è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€GPS";
+	                     longitude="è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€GPS";            	  
 	              }
 	              else
 	              { 
@@ -148,8 +148,8 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
 	                  Location pastLocation = locationManager.getLastKnownLocation   
 	                	      (bestLocationProvider); 
 	                  if ((pastLocation== null))
-	              	{latitude="ÎŞÊı¾İ£¬ÕıÔÚ¶¨Î».......";
-	                 longitude="ÎŞÊı¾İ£¬ÕıÔÚ¶¨Î».......";
+	              	{latitude="æ— æ•°æ®ï¼Œæ­£åœ¨å®šä½.......";
+	                 longitude="æ— æ•°æ®ï¼Œæ­£åœ¨å®šä½.......";
 	              	}            	
 	              else
 	              	{latitude=String.valueOf(pastLocation.getLatitude());
@@ -172,7 +172,7 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
          notification.tickerText=getText(R.string.app_name);
          notification.when=System.currentTimeMillis();
          CharSequence contentTitle = getText(R.string.app_name);
-         CharSequence contentText =  "½ô¼±±¨¾¯ÕıÔÚºóÌ¨ÔËĞĞ";
+         CharSequence contentText =  "ç´§æ€¥æŠ¥è­¦æ­£åœ¨åå°è¿è¡Œ";
          Intent intent1 = new Intent(AlertService.this, AlertActivity.class);
          PendingIntent contentIntent = PendingIntent.getActivity(AlertService.this, 0, intent1, Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
          notification.setLatestEventInfo(AlertService.this, contentTitle, contentText, contentIntent);
@@ -349,7 +349,7 @@ public void onGetGeoCodeResult(GeoCodeResult arg0) {
 public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
 	// TODO Auto-generated method stub
 	if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-        address="ÎŞ·¨ÕÒµ½ÏàÓ¦µØÖ·";
+        address="æ— æ³•æ‰¾åˆ°ç›¸åº”åœ°å€";
 			return;
 		}  address=result.getAddress();
 }  

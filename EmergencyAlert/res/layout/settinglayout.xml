@@ -151,28 +151,46 @@
          android:layout_marginRight="10dp"  
          android:background="@drawable/settingbackground"
          android:orientation="vertical" >
-      <LinearLayout
+      <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/settingtitle">
        <ImageView
+        android:id="@+id/yuzhiicon"
         android:layout_gravity="center"
         android:layout_width="20dp"
         android:layout_height="20dp" 
         android:layout_marginLeft="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" 
         android:src="@drawable/yuzhiicon" />
         <TextView
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_centerVertical="true" 
+        android:layout_toRightOf="@+id/yuzhiicon"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" 
         android:singleLine="true"
         android:text="报警阈值Alert Threshold"
         android:textColor="#A4A4A4"
         android:textSize="20sp"
         android:textStyle="bold" />
-       </LinearLayout>
+       <Button
+        android:id="@+id/resettodefault"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="29dp"
+        android:background="@drawable/normalbuttonstate"
+        android:text="恢复默认"
+        android:padding="5dp"
+        android:textColor="@drawable/bottombuttonstyle"
+        android:textSize="15sp"
+        android:textStyle="bold"  /> 
+       </RelativeLayout>
       <LinearLayout
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -782,7 +800,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="10dp">
-      <RelativeLayout
+       <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
@@ -812,14 +830,7 @@
         android:textColor="@drawable/bottombuttonstyle"
         android:textSize="15sp"
         android:textStyle="bold"  />       
-        <ListView 
-        android:id="@+id/alertlist"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="20dp"
-       android:layout_marginRight="20dp"/>
+
         </RelativeLayout>
       </RelativeLayout>
     </LinearLayout>

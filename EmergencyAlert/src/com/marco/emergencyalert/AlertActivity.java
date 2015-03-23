@@ -127,7 +127,7 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
 		mSearch.setOnGetGeoCodeResultListener(this);
         
 		baiduable=preferences.getBoolean("baidusetting", true);
-		if(!baiduable) addressTextView.setText("ÇëÔÚÉèÖÃÖĞ´ò¿ª »ñÈ¡µØÖ· ¹¦ÄÜ");
+		if(!baiduable) addressTextView.setText("è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€ è·å–åœ°å€ åŠŸèƒ½");
         int temperaturesetting=preferences.getInt("temperaturesetting", 50);
         if(temperaturesetting==100) temperatureable=false;
         else maxtemperature=(float) (30+temperaturesetting*0.4);
@@ -191,20 +191,20 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
         temalertsent=false;
         alertbottom.setClickable(false);
         Sensor temperatureSensor =
-          sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+          sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
         if (temperatureSensor != null)
           sensorManager.registerListener(tempSensorEventListener,
               temperatureSensor,                                 
               SensorManager.SENSOR_DELAY_NORMAL);
         else
-          temperatureTextView.setText("ÎŞÊı¾İ»òÄúµÄÉè±¸²»Ö§³Ö");
+          temperatureTextView.setText("æ— æ•°æ®æˆ–æ‚¨çš„è®¾å¤‡ä¸æ”¯æŒ");
         Sensor AltitudeiSensor=sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         if (AltitudeiSensor != null)
             sensorManager.registerListener(altiSensorEventListener,
            		 AltitudeiSensor,                                 
                 SensorManager.SENSOR_DELAY_NORMAL);
           else{
-       	   altitudeTextView.setText("ÎŞÊı¾İ»òÄúµÄÉè±¸²»Ö§³Ö");
+       	   altitudeTextView.setText("æ— æ•°æ®æˆ–æ‚¨çš„è®¾å¤‡ä¸æ”¯æŒ");
           }
         Sensor AcceleratorSensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             sensorManager.registerListener(accSensorEventListener, 
@@ -215,8 +215,8 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
                 || !enabledProviders.contains(LocationManager.GPS_PROVIDER)||
                     !enabledProviders.contains(LocationManager.NETWORK_PROVIDER))
         {
-        	latitudeTextView.setText("ÇëÔÚÉèÖÃÖĞ´ò¿ªGPS");
-    		longitudeTextView.setText("ÇëÔÚÉèÖÃÖĞ´ò¿ªGPS");
+        	latitudeTextView.setText("è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€GPS");
+    		longitudeTextView.setText("è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€GPS");
         }
         else
         { 
@@ -231,8 +231,8 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
             Location pastLocation = locationManager.getLastKnownLocation   
             	      (bestLocationProvider); 
             if ((pastLocation== null))
-            	{latitudeTextView.setText("ÎŞÊı¾İ£¬ÕıÔÚ¶¨Î».......");
-                longitudeTextView.setText("ÎŞÊı¾İ£¬ÕıÔÚ¶¨Î».......");
+            	{latitudeTextView.setText("æ— æ•°æ®ï¼Œæ­£åœ¨å®šä½.......");
+                longitudeTextView.setText("æ— æ•°æ®ï¼Œæ­£åœ¨å®šä½.......");
             	}            	
             else
             	{latitudeTextView.setText(String.valueOf(pastLocation.getLatitude()));
@@ -283,7 +283,7 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
         runOnUiThread(new Runnable() {
     	public void run() {
             if (!Float.isNaN(currentTemperature)) {
-              temperatureTextView.setText(currentTemperature + "¡æ");
+              temperatureTextView.setText(currentTemperature + "â„ƒ");
               if (i==49) 
             	  i=0;
               else
@@ -307,7 +307,7 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
        	   zerocounter++;
        	   if (zerocounter>10){
        		   zerocounter=0;
-       		   temperatureTextView.setText("ÎŞÊı¾İ»òÄúµÄÉè±¸²»Ö§³Ö");
+       		   temperatureTextView.setText("æ— æ•°æ®æˆ–æ‚¨çš„è®¾å¤‡ä¸æ”¯æŒ");
        	   }}
           }
          }
@@ -430,7 +430,7 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){   
             if((System.currentTimeMillis()-exitTime) > 2000){  
-                Toast.makeText(getApplicationContext(), "ÔÙ°´Ò»´ÎÍË³ö", Toast.LENGTH_SHORT).show();                                
+                Toast.makeText(getApplicationContext(), "å†æŒ‰ä¸€æ¬¡é€€å‡º", Toast.LENGTH_SHORT).show();                                
                 exitTime = System.currentTimeMillis();   
             } else {
         		if(!isMyServiceRunning()&&servicesetting)
@@ -459,8 +459,8 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
 	public void onProviderEnabled(String provider) {
 		locationManager.requestLocationUpdates(bestLocationProvider,
                 1000,0,this,null);  
-		latitudeTextView.setText("ÎŞÊı¾İ£¬ÕıÔÚ¶¨Î».......");
-        longitudeTextView.setText("ÎŞÊı¾İ£¬ÕıÔÚ¶¨Î».......");
+		latitudeTextView.setText("æ— æ•°æ®ï¼Œæ­£åœ¨å®šä½.......");
+        longitudeTextView.setText("æ— æ•°æ®ï¼Œæ­£åœ¨å®šä½.......");
 	}
 
 	@Override
@@ -469,8 +469,8 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
                 || !provider.contains(LocationManager.GPS_PROVIDER)||
                     !provider.contains(LocationManager.NETWORK_PROVIDER))
         {
-        	latitudeTextView.setText("ÇëÔÚÉèÖÃÖĞ´ò¿ªGPS");
-    		longitudeTextView.setText("ÇëÔÚÉèÖÃÖĞ´ò¿ªGPS");
+        	latitudeTextView.setText("è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€GPS");
+    		longitudeTextView.setText("è¯·åœ¨è®¾ç½®ä¸­æ‰“å¼€GPS");
         }
 	}
 	private boolean isMyServiceRunning() {
@@ -491,7 +491,7 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
 	public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
 		// TODO Auto-generated method stub
 		if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-           addressTextView.setText("ÎŞ·¨ÕÒµ½ÏàÓ¦µØÖ·");
+           addressTextView.setText("æ— æ³•æ‰¾åˆ°ç›¸åº”åœ°å€");
 			return;
 		}  addressTextView.setText(result.getAddress());
 	}

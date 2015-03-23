@@ -6,25 +6,37 @@ package com.marco.emergencyalert;
 
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+
+
 
 import com.marco.emergencyalert.SwitchButton.OnCheckedChangeListener;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Dialog;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.SimpleCursorAdapter;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +48,9 @@ public class AlertSettings extends Activity{
 	  private Button contactnumber1search;
 	  private Button contactnumber2search;
 	  private Button contactnumber3search;
+	  private Button resettodefault;
+	  private Button showlist;
+	  private Button deletelist;
 	  
 	  private SwitchButton serviceswitch;
 	  private SwitchButton soundswitch;
@@ -49,6 +64,7 @@ public class AlertSettings extends Activity{
 	  private TextView temperaturenumber;
 	  private TextView altitudenumber;
 	  private TextView accnumber;
+	  
 	  
 	  private SeekBar temperaturesettingseekbar;
 	  private SeekBar altitudesettingseekbar;
@@ -64,8 +80,11 @@ public class AlertSettings extends Activity{
 	  private int altitudesetting;
 	  private int accsetting;
 	  private long exitTime = 0;
+	  //private ListView alertrecord;
+	  MyDatabaseHelper dbHelper;
   	  SharedPreferences preferences;
   	  SharedPreferences.Editor editor;
+  	  SQLiteDatabase db;
   	  private static final int PICK_CONTACT_SUBACTIVITY = 2;
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +95,9 @@ public class AlertSettings extends Activity{
         contactnumber2search=(Button)findViewById(R.id.contactnumber2search);
         contactnumber3search=(Button)findViewById(R.id.contactnumber3search);
         contactnumberconfirm=(Button)findViewById(R.id.contactnumberconfirm);
+        showlist=(Button)findViewById(R.id.showlist);
+        deletelist=(Button)findViewById(R.id.deletelist);
+        resettodefault=(Button)findViewById(R.id.resettodefault);
         
         temperaturesettingseekbar=(SeekBar)findViewById(R.id.temperaturesettingseekbar);
         altitudesettingseekbar=(SeekBar)findViewById(R.id.altitudesettingseekbar);
@@ -87,7 +109,8 @@ public class AlertSettings extends Activity{
         temperaturenumber=(TextView)findViewById(R.id.temperaturenumber);
         altitudenumber=(TextView)findViewById(R.id.altitudenumber);
         accnumber=(TextView)findViewById(R.id.accnumber);
-        
+        //alertrecord=(ListView)findViewById(R.id.alertlist);
+    
         serviceswitch=(SwitchButton)findViewById(R.id.serviceswitch);
         soundswitch=(SwitchButton)findViewById(R.id.soundswitch);
         lightswitch=(SwitchButton)findViewById(R.id.lightswitch);
@@ -115,27 +138,30 @@ public class AlertSettings extends Activity{
 		contactnumber1.setText(contact1);
 		contactnumber2.setText(contact2);
 		contactnumber3.setText(contact3);
-		
+		db = SQLiteDatabase.openOrCreateDatabase(
+				this.getFilesDir().toString()
+				+ "/my.db3", null); 
+			
 		if(temperaturesetting==100&&altitudesetting==100&&accsetting==100)
 			serviceswitch.changbuttonstatues(false);
 		else serviceswitch.changbuttonstatues(true);
 		temperaturesettingseekbar.setProgress(temperaturesetting);
 		if(temperaturesetting==100) {
-			temperaturenumber.setText("  ¹Ø±Õ");
+			temperaturenumber.setText("  å…³é—­");
 		}else{
 			DecimalFormat df1 = new DecimalFormat("##.0");
-		    temperaturenumber.setText(df1.format(30+temperaturesetting*0.4)+"¡æ");
+		    temperaturenumber.setText(df1.format(30+temperaturesetting*0.4)+"â„ƒ");
 		}
 		altitudesettingseekbar.setProgress(altitudesetting);
 		if(altitudesetting==100) {
-			altitudenumber.setText("  ¹Ø±Õ");
+			altitudenumber.setText("  å…³é—­");
 		}else{
 			DecimalFormat df2 = new DecimalFormat("0.00");
 			altitudenumber.setText(df2.format(altitudesetting*2.5/100+0.50)+"m");
 		}
 		accsettingseekbar.setProgress(accsetting);
 		if(accsetting==100) {
-			accnumber.setText("          ¹Ø±Õ");
+			accnumber.setText("          å…³é—­");
 		}else{
 			DecimalFormat df3 = new DecimalFormat("00.0");
 			accnumber.setText(df3.format(accsetting*0.25+5)+"m/s^2");
@@ -240,6 +266,28 @@ public class AlertSettings extends Activity{
 		        searchbuttonnumber=3;
 			}        	
         });
+        resettodefault.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				temperaturesetting=50;
+				altitudesetting=28;
+				accsetting=40;
+				temperaturesettingseekbar.setProgress(temperaturesetting);
+				altitudesettingseekbar.setProgress(altitudesetting);
+				accsettingseekbar.setProgress(accsetting);
+				DecimalFormat df1 = new DecimalFormat("##.0");
+			    temperaturenumber.setText(df1.format(30+temperaturesetting*0.4)+"â„ƒ");
+			    DecimalFormat df2 = new DecimalFormat("0.00");
+				altitudenumber.setText(df2.format(altitudesetting*2.5/100+0.50)+"m");
+				DecimalFormat df3 = new DecimalFormat("00.0");
+				accnumber.setText(df3.format(accsetting*0.25+5)+"m/s^2");
+				editor = preferences.edit();
+				editor.putInt("temperaturesetting", temperaturesetting);
+				editor.putInt("altitudesetting", altitudesetting);
+				editor.putInt("accsetting", accsetting);
+				editor.commit();
+			}
+        	
+        });
         contactnumberconfirm.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				contact1=contactnumber1.getText().toString();
@@ -255,7 +303,7 @@ public class AlertSettings extends Activity{
 				if(contact2!=null&&!contact2.equals("")) count++;
 				if(contact3!=null&&!contact3.equals("")) count++;
 				  Toast.makeText(AlertSettings.this,   
-  	                       "Äú¹²±£´æÁË"+ count +"¸öÓĞĞ§ºÅÂë",   
+						  "æ‚¨å…±ä¿å­˜äº†"+ count +"ä¸ªæœ‰æ•ˆå·ç ",   
   	                        Toast.LENGTH_SHORT).show(); 			
 			}      	
         });
@@ -263,10 +311,10 @@ public class AlertSettings extends Activity{
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if(progress==100) {
-					temperaturenumber.setText("  ¹Ø±Õ");
+					temperaturenumber.setText("  å…³é—­");
 				}else{
 					DecimalFormat df = new DecimalFormat("##.0");
-				    temperaturenumber.setText(df.format(30+progress*0.4)+"¡æ");
+				    temperaturenumber.setText(df.format(30+progress*0.4)+"â„ƒ");
 				}
 				temperaturesetting=progress;
 	    		editor = preferences.edit();
@@ -283,7 +331,7 @@ public class AlertSettings extends Activity{
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if(progress==100) {
-					altitudenumber.setText("  ¹Ø±Õ");
+					altitudenumber.setText("  å…³é—­");
 				}else{
 					DecimalFormat df = new DecimalFormat("0.00");
 					altitudenumber.setText(df.format(progress*2.5/100+0.50)+"m");
@@ -303,7 +351,7 @@ public class AlertSettings extends Activity{
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if(progress==100) {
-					accnumber.setText("          ¹Ø±Õ");
+					accnumber.setText("          å…³é—­");
 				}else{
 					DecimalFormat df = new DecimalFormat("00.0");
 					accnumber.setText(df.format(progress*0.25+5)+"m/s^2");
@@ -319,7 +367,36 @@ public class AlertSettings extends Activity{
 			public void onStartTrackingTouch(SeekBar seekBar) {  }
 			public void onStopTrackingTouch(SeekBar seekBar) {  }
         });
+        showlist.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				final Dialog dialog = new Dialog(AlertSettings.this, R.style.MyDialog);
+                dialog.setContentView(R.layout.line);
+                dialog.show();
+                Window window = dialog.getWindow();
+                final ListView list=(ListView)window.findViewById(R.id.show);
+				Cursor cursor = db.rawQuery("select * from alertrecord"
+						, null);	
+				SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+						AlertSettings.this,
+						R.layout.listshow, cursor,
+						new String[] { "date", "latitude","longitude","type","alert" }
+						, new int[] {R.id.timeshow, R.id.latitudeshow, R.id.longitudeshow,R.id.typeshow,R.id.alertshow },
+						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER); //â‘¢
+					// æ˜¾ç¤ºæ•°æ®
+					list.setAdapter(adapter);
+			}
+        	
+        });
+        deletelist.setOnClickListener(new OnClickListener(){
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				db.execSQL("delete from alertrecord");
+			}       	
+        });
 	}
+
+
 	protected void onDestory(){
 		super.onDestroy();
 	}
@@ -384,7 +461,7 @@ public class AlertSettings extends Activity{
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){   
             if((System.currentTimeMillis()-exitTime) > 2000){  
-                Toast.makeText(getApplicationContext(), "ÔÙ°´Ò»´ÎÍË³ö", Toast.LENGTH_SHORT).show();                                
+                Toast.makeText(getApplicationContext(), "å†æŒ‰ä¸€æ¬¡é€€å‡º", Toast.LENGTH_SHORT).show();                                
                 exitTime = System.currentTimeMillis();   
             } else {
         		if(!isMyServiceRunning()&&servicesetting)

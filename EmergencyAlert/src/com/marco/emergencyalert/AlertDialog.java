@@ -44,10 +44,10 @@ public class AlertDialog extends Activity{
 			if (msg.what == 0x111&&!stopThread)
 			{
 				countdownprogressbar.setProgress(status);
-				countdown.setText(10-(status/10)+"Ãë");
+				countdown.setText(10-(status/10)+"ç§’");
 		        if(status==100)	{			  
 					Toast.makeText(AlertDialog.this,   
-			                  "±¨¾¯Æô¶¯",   
+							"æŠ¥è­¦å¯åŠ¨",   
 			                    Toast.LENGTH_SHORT).show(); 
 				    Intent intent  = new Intent();
 				    intent.putExtra("type", type);
@@ -92,9 +92,9 @@ public class AlertDialog extends Activity{
         cancel=(Button)findViewById(R.id.cancel);
 
         switch(type){
-        case 0:alerttype.setText("»ğÔÖ£¡"); break;
-        case 1:alerttype.setText("µøÂä£¡"); break;
-        case 2:alerttype.setText("×²»÷£¡"); break;
+        case 0:alerttype.setText("ç«ç¾ï¼"); break;
+        case 1:alerttype.setText("è·Œè½ï¼"); break;
+        case 2:alerttype.setText("æ’å‡»ï¼"); break;
         }
         gpsinfo.setText(latitude+"\n"+longitude);
         addressshow.setText(address);
@@ -103,7 +103,7 @@ public class AlertDialog extends Activity{
         cancel.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				Toast.makeText(AlertDialog.this,   
-		                  "±¨¾¯È¡Ïû",   
+						"æŠ¥è­¦å–æ¶ˆ",   
 		                    Toast.LENGTH_SHORT).show(); 
 				finish();
 			}

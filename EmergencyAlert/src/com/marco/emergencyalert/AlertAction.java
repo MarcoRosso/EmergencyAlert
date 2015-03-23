@@ -3,6 +3,9 @@ package com.marco.emergencyalert;
 
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -12,6 +15,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.hardware.Camera;
 import android.media.AudioManager;
@@ -88,6 +92,7 @@ public class AlertAction extends Activity {
 	private boolean soundsetting=true;
 	private boolean smssetting=true;
 	private boolean servicesetting;
+	private boolean dbfirst=true;
 	private String contact1;
 	private String contact2;
 	private String contact3;
@@ -97,6 +102,8 @@ public class AlertAction extends Activity {
 	private TextView titletv;
 	private MediaPlayer mMediaPlayer;
 	SharedPreferences preferences;
+	SharedPreferences.Editor editor;
+	SQLiteDatabase db;
 	
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,22 +126,29 @@ public class AlertAction extends Activity {
 		contact3=preferences.getString("contact3", "");
 		servicesetting = preferences.getBoolean("servicesetting",true);
 		boolean baiduable=preferences.getBoolean("baidusetting", true);
+		dbfirst=preferences.getBoolean("dbfirst", true);
+		db = SQLiteDatabase.openOrCreateDatabase(
+				this.getFilesDir().toString()
+				+ "/my.db3", null); 
 
-		
-		titletv.setText("±¨¾¯¹¦ÄÜÕıÔÚ¹¤×÷£¡");
+		String typestring=null;
+		titletv.setText("æŠ¥è­¦åŠŸèƒ½æ­£åœ¨å·¥ä½œï¼");
 		switch(type){
-		case 0: if(baiduable)
-			    msg="ÎÒ¿ÉÄÜÓöµ½»ğÔÖ£¬ÇëÑ¸ËÙÁªÏµÎÒ£¡ÒÔÏÂÊÇÎÒµÄÎ»ÖÃĞÅÏ¢£º"+"\n¾­¶È£º"+latitude+"\nÎ³¶È£º"+longitude+"\n¿ÉÄÜµÄµØÖ·£º"+address;
+		case 0: typestring="ç«ç¾";
+			    if(baiduable)
+			    msg="æˆ‘å¯èƒ½é‡åˆ°ç«ç¾ï¼Œè¯·è¿…é€Ÿè”ç³»æˆ‘ï¼ä»¥ä¸‹æ˜¯æˆ‘çš„ä½ç½®ä¿¡æ¯ï¼š"+"\nç»åº¦ï¼š"+latitude+"\nçº¬åº¦ï¼š"+longitude+"\nå¯èƒ½çš„åœ°å€ï¼š"+address;
 		        else
-			    msg="ÎÒ¿ÉÄÜÓöµ½»ğÔÖ£¬ÇëÑ¸ËÙÁªÏµÎÒ£¡ÒÔÏÂÊÇÎÒµÄÎ»ÖÃĞÅÏ¢£º"+"\n¾­¶È£º"+latitude+"\nÎ³¶È£º"+longitude;break;
-		case 1:if(baiduable)
-			    msg="ÎÒ¿ÉÄÜ¼±ËÙÏÂ×¹£¬ÇëÑ¸ËÙÁªÏµÎÒ£¡ÒÔÏÂÊÇÎÒµÄÎ»ÖÃĞÅÏ¢£º"+"\n¾­¶È£º"+latitude+"\nÎ³¶È£º"+longitude+"\n¿ÉÄÜµÄµØÖ·£º"+address;
+			    msg="æˆ‘å¯èƒ½é‡åˆ°ç«ç¾ï¼Œè¯·è¿…é€Ÿè”ç³»æˆ‘ï¼ä»¥ä¸‹æ˜¯æˆ‘çš„ä½ç½®ä¿¡æ¯ï¼š"+"\nç»åº¦ï¼š"+latitude+"\nçº¬åº¦ï¼š"+longitude;break;
+		case 1: typestring="å è½";
+			    if(baiduable)
+			    msg="æˆ‘å¯èƒ½æ€¥é€Ÿä¸‹å ï¼Œè¯·è¿…é€Ÿè”ç³»æˆ‘ï¼ä»¥ä¸‹æ˜¯æˆ‘çš„ä½ç½®ä¿¡æ¯ï¼š"+"\nç»åº¦ï¼š"+latitude+"\nçº¬åº¦ï¼š"+longitude+"\nå¯èƒ½çš„åœ°å€ï¼š"+address;
 		       else
-			    msg="ÎÒ¿ÉÄÜ¼±ËÙÏÂ×¹£¬ÇëÑ¸ËÙÁªÏµÎÒ£¡ÒÔÏÂÊÇÎÒµÄÎ»ÖÃĞÅÏ¢£º"+"\n¾­¶È£º"+latitude+"\nÎ³¶È£º"+longitude;break;
-		case 2:if(baiduable)
-			    msg="ÎÒ¿ÉÄÜÔâµ½×²»÷£¬ÇëÑ¸ËÙÁªÏµÎÒ£¡ÒÔÏÂÊÇÎÒµÄÎ»ÖÃĞÅÏ¢£º"+"\n¾­¶È£º"+latitude+"\nÎ³¶È£º"+longitude+"\n¿ÉÄÜµÄµØÖ·£º"+address;
+			    msg="æˆ‘å¯èƒ½æ€¥é€Ÿä¸‹å ï¼Œè¯·è¿…é€Ÿè”ç³»æˆ‘ï¼ä»¥ä¸‹æ˜¯æˆ‘çš„ä½ç½®ä¿¡æ¯ï¼š"+"\nç»åº¦ï¼š"+latitude+"\nçº¬åº¦ï¼š"+longitude;break;
+		case 2: typestring="æ’å‡»";
+			    if(baiduable)
+			    msg="æˆ‘å¯èƒ½é­åˆ°æ’å‡»ï¼Œè¯·è¿…é€Ÿè”ç³»æˆ‘ï¼ä»¥ä¸‹æ˜¯æˆ‘çš„ä½ç½®ä¿¡æ¯ï¼š"+"\nç»åº¦ï¼š"+latitude+"\nçº¬åº¦ï¼š"+longitude+"\nå¯èƒ½çš„åœ°å€ï¼š"+address;
 		       else
-			    msg="ÎÒ¿ÉÄÜÔâµ½×²»÷£¬ÇëÑ¸ËÙÁªÏµÎÒ£¡ÒÔÏÂÊÇÎÒµÄÎ»ÖÃĞÅÏ¢£º"+"\n¾­¶È£º"+latitude+"\nÎ³¶È£º"+longitude;break;
+			    msg="æˆ‘å¯èƒ½é­åˆ°æ’å‡»ï¼Œè¯·è¿…é€Ÿè”ç³»æˆ‘ï¼ä»¥ä¸‹æ˜¯æˆ‘çš„ä½ç½®ä¿¡æ¯ï¼š"+"\nç»åº¦ï¼š"+latitude+"\nçº¬åº¦ï¼š"+longitude;break;
 		}
 		if(smssetting){
 			int count=0;
@@ -151,9 +165,9 @@ public class AlertAction extends Activity {
 				sendmessage(contact3,msg);
 			}
 			if(count==0)
-		    Toast.makeText(AlertAction.this, "ÄúÎ´ÌîĞ´ÓĞĞ§ºÅÂë£¬±¨¾¯¶ÌÏ¢ÎŞ·¨·¢ËÍ£¡" , Toast.LENGTH_SHORT).show();
+		    Toast.makeText(AlertAction.this, "æ‚¨æœªå¡«å†™æœ‰æ•ˆå·ç ï¼ŒæŠ¥è­¦çŸ­æ¯æ— æ³•å‘é€ï¼" , Toast.LENGTH_SHORT).show();
 			else
-			Toast.makeText(AlertAction.this, count+"Ìõ±¨¾¯ĞÅÏ¢ÒÑ·¢ËÍ!" , Toast.LENGTH_SHORT).show();
+			Toast.makeText(AlertAction.this, count+"æ¡æŠ¥è­¦ä¿¡æ¯å·²å‘é€!" , Toast.LENGTH_SHORT).show();
 		}
 		
 		if(soundsetting){
@@ -202,7 +216,38 @@ public class AlertAction extends Activity {
 				show_handler.postDelayed(this,bgflashtime[warmingcounter%18]);
 			}
 		};}else warmingtv.setBackgroundColor(bgcolor[1]);
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());       
+		String date = sdf.format(new Date());
+		String alertstring="å¦";	
+		if(smssetting){
+			if((contact1==null||contact1.equals(""))||(contact2==null||contact2.equals(""))
+					||(contact3==null||contact3.equals("")))
+			alertstring="å¦";
+			else alertstring="æ˜¯";
+		}
+		if(dbfirst){
+		db.execSQL("create table alertrecord(_id integer"
+				+ " primary key autoincrement,"
+				+ " date varchar(25),"
+				+ " latitude varchar(20),"
+				+ " longitude varchar(20),"
+				+ " type varchar(20),"
+				+ " alert varchar(20))");
+		editor = preferences.edit();
+		editor.putBoolean("dbfirst", false);
+		editor.commit();}
+		insertData(db,date,latitude,longitude,
+			 typestring,alertstring);
 	}
+	
+	private void insertData(SQLiteDatabase db, String timein, String latitudein
+			, String longitudein, String typein, String alertin)
+		{
+			db.execSQL("insert into alertrecord values(null ,?,?,?,?,?)"
+				, new String[] {timein,latitudein,longitudein,typein,alertin});
+			System.out.println("-----data stored--------");
+		}
     public void onDestroy() 
 	{
         super.onDestroy();
@@ -212,7 +257,9 @@ public class AlertAction extends Activity {
         
         if(soundsetting)
   	     if (mMediaPlayer.isPlaying())
- 		     mMediaPlayer.release();	
+ 		     mMediaPlayer.release();
+        db.close();
+
     }
     protected void onResume() {
         super.onResume();
@@ -233,7 +280,7 @@ public class AlertAction extends Activity {
     public void sendmessage(String contactnumber, String alertmsg){
 		SmsManager msmsManager = SmsManager.getDefault(); 
   		if (contactnumber==null||contactnumber.equals("")){
-  			Toast.makeText(this, "ÁªÏµÈËºÅÂëÎª¿Õ!" , Toast.LENGTH_SHORT).show();
+  			Toast.makeText(this, "è”ç³»äººå·ç ä¸ºç©º!" , Toast.LENGTH_SHORT).show();
   		}else{
 		     try 
   			{     
@@ -243,7 +290,7 @@ public class AlertAction extends Activity {
   			 catch(Exception e) 
   			 {
   			   e.printStackTrace();
-  		   Toast.makeText(this, "±¨¾¯¶ÌĞÅ·¢ËÍ´íÎó!" , Toast.LENGTH_SHORT).show();
+  		   Toast.makeText(this, "æŠ¥è­¦çŸ­ä¿¡å‘é€é”™è¯¯!" , Toast.LENGTH_SHORT).show();
   			  }
   			ContentValues values = new ContentValues();  
   			values.put("date", System.currentTimeMillis());   
@@ -257,7 +304,7 @@ public class AlertAction extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){   
             if((System.currentTimeMillis()-exitTime) > 2000){  
-                Toast.makeText(getApplicationContext(), "ÔÙ°´Ò»´ÎÍË³ö±¨¾¯", Toast.LENGTH_SHORT).show();                                
+                Toast.makeText(getApplicationContext(), "å†æŒ‰ä¸€æ¬¡é€€å‡ºæŠ¥è­¦", Toast.LENGTH_SHORT).show();                                
                 exitTime = System.currentTimeMillis();   
             } else {
         		if(!isMyServiceRunning()&&servicesetting)
