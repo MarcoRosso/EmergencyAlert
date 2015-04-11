@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+>
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="20dp"
+    android:layout_marginLeft="10dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="报警时间：" 
+        android:textColor="#A4A4A4"/>
+    <TextView
+        android:id="@+id/timeshow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:textColor="#A4A4A4"/>
+</LinearLayout>
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp">
+     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="报警地点：" 
+        android:textColor="#A4A4A4"/>
+     <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">"
+     <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="经度："
+        android:textColor="#A4A4A4"/>
+    <TextView
+        android:id="@+id/latitudeshow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#A4A4A4" 
+        />
+    </LinearLayout>
+    <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp">    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="纬度："
+        android:textColor="#A4A4A4"/>
+    <TextView
+        android:id="@+id/longitudeshow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#A4A4A4" 
+        />
+    </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp">
+       <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="报警地址："
+        android:textColor="#A4A4A4"/>
+       <TextView
+        android:id="@+id/addressshow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:textColor="#A4A4A4"
+        />
+ </LinearLayout>
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp">
+       <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="报警类型："
+        android:textColor="#A4A4A4"/>
+       <TextView
+        android:id="@+id/typeshow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:textColor="#A4A4A4"
+        />
+ </LinearLayout>
+ <LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginLeft="10dp"
+    android:layout_marginBottom="20dp" >
+       <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="是否发送短信："
+        android:textColor="#A4A4A4"/>
+       <TextView
+        android:id="@+id/alertshow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#A4A4A4" />
+ </LinearLayout>
+
+         
+</LinearLayout>

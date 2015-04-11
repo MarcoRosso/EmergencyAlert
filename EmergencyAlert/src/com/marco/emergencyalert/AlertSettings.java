@@ -5,15 +5,38 @@ package com.marco.emergencyalert;
 
 
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 
 
+import org.json.JSONObject;
+
+
+
+
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.listener.OtherLoginListener;
+
 
 import com.marco.emergencyalert.SwitchButton.OnCheckedChangeListener;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WeiboAuth;
+import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.sina.weibo.sdk.exception.WeiboException;
+
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -24,16 +47,27 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
@@ -64,8 +98,10 @@ public class AlertSettings extends Activity{
 	  private TextView temperaturenumber;
 	  private TextView altitudenumber;
 	  private TextView accnumber;
-	  
-	  
+	  private TextView weiboname;
+	  private ImageView weiboicon;
+	  private LinearLayout weibosetting;
+	    
 	  private SeekBar temperaturesettingseekbar;
 	  private SeekBar altitudesettingseekbar;
 	  private SeekBar accsettingseekbar;
@@ -73,6 +109,7 @@ public class AlertSettings extends Activity{
 	  private String contact1;
 	  private String contact2;
 	  private String contact3;
+	  private String downloadpath;
 	  
 	  private boolean servicesetting;
 	  private int searchbuttonnumber;
@@ -80,12 +117,36 @@ public class AlertSettings extends Activity{
 	  private int altitudesetting;
 	  private int accsetting;
 	  private long exitTime = 0;
-	  //private ListView alertrecord;
-	  MyDatabaseHelper dbHelper;
   	  SharedPreferences preferences;
   	  SharedPreferences.Editor editor;
   	  SQLiteDatabase db;
+  	  JSONObject obj;
+  	  String json = "";
   	  private static final int PICK_CONTACT_SUBACTIVITY = 2;
+  	  private String APPID = "fcfd0b7fd073f19f9e0fad6c2d59155f";
+  	Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			if(msg.what==0x123){
+			String result = (String) msg.obj;
+			if (result != null) {
+				JsonUtils jsonUtils = new JsonUtils();
+				User weibouser=jsonUtils.parseUserFromJson(result);
+				preferences = getSharedPreferences("setting", MODE_PRIVATE);
+				editor = preferences.edit();
+				weiboname.setText(weibouser.getScreen_name());
+				editor.putString("weibo_name",weibouser.getScreen_name());
+				downloadpath=weibouser.getProfile_image_url();
+				editor.putString("weibo_logo", downloadpath);
+				editor.commit();
+				new Thread(new download()).start();
+			} else {
+				Toast.makeText(getApplicationContext(), "暂无个人信息，请联系开发者获取测试资格", Toast.LENGTH_LONG).show();
+			}
+		}else if(msg.what==0x124){
+			weiboicon.setImageBitmap((Bitmap) msg.obj);
+			}
+		};
+	};
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settinglayout);
@@ -109,7 +170,9 @@ public class AlertSettings extends Activity{
         temperaturenumber=(TextView)findViewById(R.id.temperaturenumber);
         altitudenumber=(TextView)findViewById(R.id.altitudenumber);
         accnumber=(TextView)findViewById(R.id.accnumber);
-        //alertrecord=(ListView)findViewById(R.id.alertlist);
+        weiboname=(TextView)findViewById(R.id.weiboname);
+        weiboicon=(ImageView)findViewById(R.id.weibologo);
+        weibosetting=(LinearLayout)findViewById(R.id.weibosetting);
     
         serviceswitch=(SwitchButton)findViewById(R.id.serviceswitch);
         soundswitch=(SwitchButton)findViewById(R.id.soundswitch);
@@ -140,7 +203,8 @@ public class AlertSettings extends Activity{
 		contactnumber3.setText(contact3);
 		db = SQLiteDatabase.openOrCreateDatabase(
 				this.getFilesDir().toString()
-				+ "/my.db3", null); 
+				+ "/my.db3", null);
+		Bmob.initialize(this, APPID);
 			
 		if(temperaturesetting==100&&altitudesetting==100&&accsetting==100)
 			serviceswitch.changbuttonstatues(false);
@@ -165,6 +229,44 @@ public class AlertSettings extends Activity{
 		}else{
 			DecimalFormat df3 = new DecimalFormat("00.0");
 			accnumber.setText(df3.format(accsetting*0.25+5)+"m/s^2");
+		}
+		
+		weibosetting.setOnClickListener(new OnClickListener(){
+            @Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				BmobUser.weiboLogin(AlertSettings.this, "2785379416", "https://api.weibo.com/oauth2/default.html", new OtherLoginListener() {
+					
+					@Override
+					public void onSuccess(JSONObject userAuth) {
+						// TODO Auto-generated method stub
+						Toast.makeText(getApplicationContext(), "登陆成功",Toast.LENGTH_SHORT).show();
+						Log.i("login", "weibo登陆成功返回:"+userAuth.toString());				
+						json=userAuth.toString();
+						editor = preferences.edit();
+						editor.putString("weibo_json", json);
+						editor.commit();
+						getWeiboInfo();
+					}
+					
+					@Override
+					public void onFailure(int code, String msg) {
+						// TODO Auto-generated method stub
+						//若出现授权失败(authData error)，可清除该应用缓存，之后在授权新浪登陆
+						Toast.makeText(getApplicationContext(), "登陆失败！", Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+			
+		});
+		BmobUser bmobUser = BmobUser.getCurrentUser(this);
+		if(bmobUser != null){
+		    weibosetting.setClickable(false);
+		    weiboname.setText(preferences.getString("weibo_name",""));
+		    downloadpath=preferences.getString("weibo_logo", "");
+		    new Thread(new download()).start();		    
+		}else{
+		   weibosetting.setClickable(true);
 		}
 		
         alertbottom.setOnClickListener(new OnClickListener(){
@@ -375,26 +477,94 @@ public class AlertSettings extends Activity{
                 dialog.show();
                 Window window = dialog.getWindow();
                 final ListView list=(ListView)window.findViewById(R.id.show);
+                try{
 				Cursor cursor = db.rawQuery("select * from alertrecord"
 						, null);	
 				SimpleCursorAdapter adapter = new SimpleCursorAdapter(
 						AlertSettings.this,
 						R.layout.listshow, cursor,
-						new String[] { "date", "latitude","longitude","type","alert" }
-						, new int[] {R.id.timeshow, R.id.latitudeshow, R.id.longitudeshow,R.id.typeshow,R.id.alertshow },
+						new String[] { "date", "latitude","longitude","type","alert","address" }
+						, new int[] {R.id.timeshow, R.id.latitudeshow, R.id.longitudeshow,R.id.typeshow,R.id.alertshow,R.id.addressshow},
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER); //③
 					// 显示数据
-					list.setAdapter(adapter);
+					list.setAdapter(adapter);}catch (Exception e){
+						Toast.makeText(getApplicationContext(), "无数据", Toast.LENGTH_SHORT);
+					}
 			}
         	
         });
         deletelist.setOnClickListener(new OnClickListener(){
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				db.execSQL("delete from alertrecord");
+				try{
+				db.execSQL("delete from alertrecord");}
+				catch (Exception e){
+					Toast.makeText(getApplicationContext(), "无数据", Toast.LENGTH_SHORT);
+				}
 			}       	
         });
+		if(!isMyServiceRunning()&&servicesetting)
+	    	startService(new Intent(this, AlertService.class));	
 	}
+	public void getWeiboInfo() {
+		// 根据http://open.weibo.com/wiki/2/users/show提供的API文档
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					obj = new JSONObject(json);
+					Map<String, String> params = new HashMap<String, String>();
+					if (obj != null) {
+						params.put("access_token", obj.getJSONObject("weibo")
+								.getString("access_token"));// 此为微博登陆成功之后返回的access_token
+						params.put("uid",
+								obj.getJSONObject("weibo").getString("uid"));
+						String expires=obj.getJSONObject("weibo").getString("expires_in");
+						editor = preferences.edit();
+						editor.putString("weibo_expire", expires);
+						editor.commit();
+					}
+					String result = NetUtils.getRequest(
+							"https://api.weibo.com/2/users/show.json", params);
+					Log.d("login", "微博的个人信息：" + result);	
+					Message msg = new Message();
+					msg.what=0x123;
+					msg.obj = result;
+					handler.sendMessage(msg);
+
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+
+		}.start();
+	}
+    class download implements Runnable{
+        
+        @Override
+        public void run() {
+            // TODO Auto-generated method stub
+            String path = downloadpath;
+            try {
+                 
+                URL url = new URL(path);
+                HttpURLConnection con = (HttpURLConnection)url.openConnection();
+                con.setConnectTimeout(5000);
+                con.setRequestMethod("GET");
+                con.connect();
+                 
+                if (con.getResponseCode() == 200){          
+                    InputStream is = con.getInputStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    handler.obtainMessage(0x124,bitmap).sendToTarget();
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+             
+        }
+    }
 
 
 	protected void onDestory(){
@@ -475,12 +645,37 @@ public class AlertSettings extends Activity{
 	private boolean isMyServiceRunning() {
 	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if ("com.marco.AlertService".equals(service.service.getClassName())) {
+	        if ("com.marco..emergencyalert.AlertService".equals(service.service.getClassName())) {
 	            return true;
 	        }
 	    }
 	    return false;
 	}
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_about) {
+        	LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View mySaveView = layoutInflater.inflate(R.layout.about, null);     
+        Dialog alertDialog = new android.app.AlertDialog.Builder(AlertSettings.this).
+            setTitle("About Developer").
+            setView(mySaveView).
+            setPositiveButton("OK", null).
+            create();
+           alertDialog.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     
 }

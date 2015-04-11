@@ -7,14 +7,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+
+
+
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.location.LocationClientOption.LocationMode;
+
 
 
 
@@ -33,10 +35,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+
 
 import android.os.Bundle;
 
@@ -54,11 +53,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class AlertActivity extends Activity implements LocationListener, OnGetGeoCoderResultListener {
+public class AlertActivity extends Activity {
 	  private Button alertbottom;
 	  private Button configbottom;
 	  private SensorManager sensorManager;
-	  private LocationManager locationManager;
 	  private TextView temperatureTextView;
 	  private TextView altitudeTextView;
 	  private TextView accTextView;
@@ -84,7 +82,6 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
 	  private int acccounter=0;
 	  private int zerocounter=0;
 	  private int temalertcounter;
-	  private String bestLocationProvider;
 	  private boolean temalertsent=false;
 	  private boolean servicesetting;
 	  private boolean temperatureable=true;
@@ -92,15 +89,14 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
 	  private boolean accable=true;
 	  private boolean baiduable=true;
 	  SharedPreferences preferences;
-      GeoCoder mSearch = null;
+	  private LocationClient mLocationClient;
+	  private LocationMode tempMode = LocationMode.Hight_Accuracy;
 
-      
-      
-      
+
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.alertlayout);
+        mLocationClient = ((LocationApplication)getApplication()).mLocationClient;
         preferences = getSharedPreferences("setting", MODE_PRIVATE);
         servicesetting = preferences.getBoolean("servicesetting",true);
         alertbottom=(Button)findViewById(R.id.alertbottom);
@@ -117,17 +113,20 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
         addressTextView=(TextView)findViewById(R.id.address);
         
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         
         temperaturealert.setVisibility(View.INVISIBLE);
         altitudealert.setVisibility(View.INVISIBLE);
         accalert.setVisibility(View.INVISIBLE);
         
-		mSearch = GeoCoder.newInstance();
-		mSearch.setOnGetGeoCodeResultListener(this);
+
+       ((LocationApplication)getApplication()).latitude = latitudeTextView;
+       ((LocationApplication)getApplication()).longitude = longitudeTextView;
+       
         
 		baiduable=preferences.getBoolean("baidusetting", true);
-		if(!baiduable) addressTextView.setText("请在设置中打开 获取地址 功能");
+		if(!baiduable) addressTextView.setText("请在设置中打开 获取位置 功能");
+		else ((LocationApplication)getApplication()).address = addressTextView;
         int temperaturesetting=preferences.getInt("temperaturesetting", 50);
         if(temperaturesetting==100) temperatureable=false;
         else maxtemperature=(float) (30+temperaturesetting*0.4);
@@ -156,6 +155,7 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
         	updateaccelerator();      
           }
         }, 0, 100);
+
         
         configbottom.setOnClickListener(new OnClickListener(){
 			@Override
@@ -173,13 +173,15 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
 		if(contact1!=null&&!contact1.equals("")) count++;
 		if(contact2!=null&&!contact2.equals("")) count++;
 		if(contact3!=null&&!contact3.equals("")) count++;
-        List<String> enabledProviders = locationManager.getProviders(true);
-        if (enabledProviders.isEmpty()
-                || !enabledProviders.contains(LocationManager.GPS_PROVIDER)||
-                    !enabledProviders.contains(LocationManager.NETWORK_PROVIDER)||count==0){
+
+        if (count==0){
         final Dialog dialog = new Dialog(AlertActivity.this, R.style.MyDialogOutside);
         dialog.setContentView(R.layout.fisrtrundialog);
         dialog.show();}
+        
+        InitLocation();
+        mLocationClient.start();
+
 	}
     protected void onResume() {
         super.onResume();
@@ -209,42 +211,6 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
         Sensor AcceleratorSensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             sensorManager.registerListener(accSensorEventListener, 
             		AcceleratorSensor,SensorManager.SENSOR_DELAY_NORMAL );
-       
-        List<String> enabledProviders = locationManager.getProviders(true);
-        if (enabledProviders.isEmpty()
-                || !enabledProviders.contains(LocationManager.GPS_PROVIDER)||
-                    !enabledProviders.contains(LocationManager.NETWORK_PROVIDER))
-        {
-        	latitudeTextView.setText("请在设置中打开GPS");
-    		longitudeTextView.setText("请在设置中打开GPS");
-        }
-        else
-        { 
-        	Criteria mCriteria01 = new Criteria();   
-            mCriteria01.setAccuracy(Criteria.ACCURACY_COARSE);   
-            mCriteria01.setAltitudeRequired(false);   
-            mCriteria01.setBearingRequired(false);   
-            mCriteria01.setCostAllowed(true);   
-            mCriteria01.setPowerRequirement(Criteria.POWER_HIGH);   
-            bestLocationProvider =    
-            locationManager.getBestProvider(mCriteria01, true);
-            Location pastLocation = locationManager.getLastKnownLocation   
-            	      (bestLocationProvider); 
-            if ((pastLocation== null))
-            	{latitudeTextView.setText("无数据，正在定位.......");
-                longitudeTextView.setText("无数据，正在定位.......");
-            	}            	
-            else
-            	{latitudeTextView.setText(String.valueOf(pastLocation.getLatitude()));
-                longitudeTextView.setText(String.valueOf(pastLocation.getLongitude()));
-    			if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitudeTextView.getText()
-    					.toString())), (Float.valueOf(longitudeTextView.getText().toString())));
-    			mSearch.reverseGeoCode(new ReverseGeoCodeOption()
-				.location(ptCenter));}
-            	}
-    		locationManager.requestLocationUpdates(bestLocationProvider,
-                    1000,0,this,null);          
-        } 
     	accavoidshake=true;
     	acccounter=0;
     }
@@ -253,11 +219,14 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
         sensorManager.unregisterListener(tempSensorEventListener);
         sensorManager.unregisterListener(altiSensorEventListener);
         sensorManager.unregisterListener(accSensorEventListener);
-        locationManager.removeUpdates(this);
         super.onPause();
       }
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		mLocationClient.stop();
+		super.onStop();
+	}
     protected void onDestory(){
-    	mSearch.destroy();
     	super.onDestroy();
     }
 	   private final SensorEventListener tempSensorEventListener = new SensorEventListener() {
@@ -278,7 +247,7 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
 			   accvalues =event.values.clone();		   
 		   }	   
 	   };
-	   
+
     private void updatetemperature() {
         runOnUiThread(new Runnable() {
     	public void run() {
@@ -442,58 +411,25 @@ public class AlertActivity extends Activity implements LocationListener, OnGetGe
         return super.onKeyDown(keyCode, event);
     }
     
-	@Override
-	public void onLocationChanged(Location location) {
-		latitudeTextView.setText(String.valueOf(location.getLatitude()));
-		longitudeTextView.setText(String.valueOf(location.getLongitude()));
-		if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitudeTextView.getText()
-				.toString())), (Float.valueOf(longitudeTextView.getText().toString())));
-		mSearch.reverseGeoCode(new ReverseGeoCodeOption()
-		.location(ptCenter));}
-	}
 
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-
-	}
-	public void onProviderEnabled(String provider) {
-		locationManager.requestLocationUpdates(bestLocationProvider,
-                1000,0,this,null);  
-		latitudeTextView.setText("无数据，正在定位.......");
-        longitudeTextView.setText("无数据，正在定位.......");
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		if (provider.isEmpty()
-                || !provider.contains(LocationManager.GPS_PROVIDER)||
-                    !provider.contains(LocationManager.NETWORK_PROVIDER))
-        {
-        	latitudeTextView.setText("请在设置中打开GPS");
-    		longitudeTextView.setText("请在设置中打开GPS");
-        }
-	}
 	private boolean isMyServiceRunning() {
 	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if ("com.marco.AlertService".equals(service.service.getClassName())) {
+	        if ("com.marco..emergencyalert.AlertService".equals(service.service.getClassName())) {
 	            return true;
 	        }
 	    }
 	    return false;
 	}
-	@Override
-	public void onGetGeoCodeResult(GeoCodeResult arg0) {
-		// TODO Auto-generated method stub
-		
+	private void InitLocation(){
+		LocationClientOption option = new LocationClientOption();
+		option.setLocationMode(tempMode);//设置定位模式
+		option.setCoorType("gcj02");//返回的定位结果是百度经纬度，默认值gcj02
+		option.setScanSpan(2000);//设置发起定位请求的间隔时间为5000ms
+		option.setIsNeedAddress(true);
+		mLocationClient.setLocOption(option);
 	}
-	@Override
-	public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
-		// TODO Auto-generated method stub
-		if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-           addressTextView.setText("无法找到相应地址");
-			return;
-		}  addressTextView.setText(result.getAddress());
-	}
+
+
 
 }

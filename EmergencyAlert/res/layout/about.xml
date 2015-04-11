@@ -17,6 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Designed By Porco Rosso.\n All Rights Reserved!\n Sina Weibo @ProcoRosso" />
+        android:text="Designed By Porco Rosso.\n All Rights Reserved!\n Sponsored by Innovation Fund of UESTC.\n Sina Weibo @ProcoRosso" />
 
 </LinearLayout>

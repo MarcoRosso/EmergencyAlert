@@ -27,19 +27,18 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import com.baidu.mapapi.SDKInitializer;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.location.LocationClientOption.LocationMode;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
-import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
 
-public class AlertService extends Service implements LocationListener,OnGetGeoCoderResultListener{
+
+public class AlertService extends Service {
 	private SensorManager sensorManager;
-	private LocationManager locationManager;
 	private NotificationManager manager;
 	WakeLock mWakeLock = null;
 	private float currentAltitude;
@@ -52,22 +51,23 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
 	private int acccounter=0;
 	int temalertcounter;
 	int type;
-	int progressStatus = 0;
 	private boolean accavoidshake=true;
 	private boolean baiduable=true;
 	private float maxtemperature;
 	private float maxaltitude;
 	private float maxacc;
-	private String latitude= null;
-	private String longitude= null;
-	private String address=null;
-	Timer t = new Timer();
+	private String latitude="正在获取.....";
+	private String longitude="正在获取.....";
+	private String address="打开数据或WiFi连接互联网获取";
 	private boolean temperatureable=true;
 	private boolean altitudeable=true;
 	private boolean accable=true;
 	private static final float ALPHA = 0.8f;
 	SharedPreferences preferences;
-	GeoCoder mSearch = null;
+	 private LocationClient locationClient = null;
+	 private static final int UPDATE_TIME = 5000;
+	 private static int LOCATION_COUTNS = 0;
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -75,13 +75,20 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
 	}
 	 public void onCreate() {
 	        super.onCreate();
-	        SDKInitializer.initialize(getApplicationContext());
 	        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-	        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+	        locationClient = new LocationClient(this);
+	        LocationClientOption option = new LocationClientOption();
+	        option.setOpenGps(true);        //是否打开GPS
+	        option.setCoorType("gcj02");       //设置返回值的坐标类型。
+	        option.setLocationMode(LocationMode.Battery_Saving);  //设置定位优先级
+	        option.setProdName("LocationDemo"); //设置产品线名称。强烈建议您使用自定义的产品线名称，方便我们以后为您提供更高效准确的定位服务。
+	        option.setScanSpan(UPDATE_TIME);    //设置定时定位的时间间隔。单位毫秒
+	        option.setIsNeedAddress(true);
+	        locationClient.setLocOption(option);
 	        
 	        preferences = getSharedPreferences("setting", MODE_PRIVATE);
 			baiduable=preferences.getBoolean("baidusetting", true);
-			if(!baiduable) address="请在设置中打开 获取地址 功能";
+			if(!baiduable) address="请在设置中打开 获取位置 功能";
 	        int temperaturesetting=preferences.getInt("temperaturesetting", 50);
 	        if(temperaturesetting==100) temperatureable=false;
 	        else maxtemperature=(float) (30+temperaturesetting*0.4);
@@ -91,10 +98,7 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
 	        int accsetting=preferences.getInt("accsetting",40);
 	        if(accsetting==100) accable=false;
 	        else  maxacc=(float) (accsetting*0.25+5);
-	        
-			mSearch = GeoCoder.newInstance();
-			mSearch.setOnGetGeoCodeResultListener(this);
-			
+	        			
 	        Timer updateTimer = new Timer("UpdateTemperature");
 	        updateTimer.scheduleAtFixedRate(new TimerTask() {
 	          public void run() {  	  
@@ -127,41 +131,51 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
 	              Sensor AcceleratorSensor=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	                  sensorManager.registerListener(accSensorEventListener, 
 	                  		AcceleratorSensor,SensorManager.SENSOR_DELAY_NORMAL );
-	             
-	              List<String> enabledProviders = locationManager.getProviders(true);
-	              if (enabledProviders.isEmpty()
-	                      || !enabledProviders.contains(LocationManager.GPS_PROVIDER)||
-	                          !enabledProviders.contains(LocationManager.NETWORK_PROVIDER))
-	              {      latitude="请在设置中打开GPS";
-	                     longitude="请在设置中打开GPS";            	  
-	              }
-	              else
-	              { 
-	              	Criteria mCriteria01 = new Criteria();   
-	                  mCriteria01.setAccuracy(Criteria.ACCURACY_MEDIUM);   
-	                  mCriteria01.setAltitudeRequired(false);   
-	                  mCriteria01.setBearingRequired(false);   
-	                  mCriteria01.setCostAllowed(true);   
-	                  mCriteria01.setPowerRequirement(Criteria.POWER_LOW);   
-	                  String bestLocationProvider =    
-	                  locationManager.getBestProvider(mCriteria01, true);
-	                  Location pastLocation = locationManager.getLastKnownLocation   
-	                	      (bestLocationProvider); 
-	                  if ((pastLocation== null))
-	              	{latitude="无数据，正在定位.......";
-	                 longitude="无数据，正在定位.......";
-	              	}            	
-	              else
-	              	{latitude=String.valueOf(pastLocation.getLatitude());
-	                  longitude=String.valueOf(pastLocation.getLongitude());
-	                  if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitude)), 
-	                		   (Float.valueOf(longitude)));
-	      			mSearch.reverseGeoCode(new ReverseGeoCodeOption()
-	  				.location(ptCenter));}
-	              	}
-	          		  locationManager.requestLocationUpdates(bestLocationProvider,
-	                          1000,0,this,null);
-	              }
+	          
+
+	           locationClient.registerLocationListener(new BDLocationListener() {
+	                      
+	                      @Override
+	                      public void onReceiveLocation(BDLocation location) {
+	                          // TODO Auto-generated method stub
+	                          if (location == null) {
+	                              return;
+	                          }
+	                          StringBuffer sb = new StringBuffer(256);
+	                          sb.append("Time : ");
+	                          sb.append(location.getTime());
+	                          sb.append("\nError code : ");
+	                          sb.append(location.getLocType());
+	                          sb.append("\nLatitude : ");
+	                          latitude=String.valueOf(location.getLatitude());
+	                          sb.append(location.getLatitude());
+	                          sb.append("\nLontitude : ");
+	                          longitude=String.valueOf(location.getLongitude());
+	                          sb.append(location.getLongitude());
+	                          sb.append("\nRadius : ");
+	                          sb.append(location.getRadius());
+	                          if (location.getLocType() == BDLocation.TypeGpsLocation){
+	                              sb.append("\nSpeed : ");
+	                              sb.append(location.getSpeed());
+	                              sb.append("\nSatellite : ");
+	                              sb.append(location.getSatelliteNumber());
+	                              if(!baiduable) address="请在设置中打开 获取位置 功能";
+	                              else address=location.getAddrStr();
+	                          } else if (location.getLocType() == BDLocation.TypeNetWorkLocation){
+	                              sb.append("\nAddress : ");
+	                              if(!baiduable) address="请在设置中打开 获取位置 功能";
+	                              else address=location.getAddrStr();
+	                              sb.append(location.getAddrStr());
+	                          }
+	                          LOCATION_COUTNS ++;
+	                          sb.append("\n检查位置更新次数：");
+	                          sb.append(String.valueOf(LOCATION_COUTNS));
+
+	                      }                    
+	                  });
+	           locationClient.start();
+	           locationClient.requestLocation();
+	              
     }
 	public int onStartCommand(Intent intent, int flags,int startId){
          super.onStartCommand(intent, flags, startId);
@@ -172,7 +186,7 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
          notification.tickerText=getText(R.string.app_name);
          notification.when=System.currentTimeMillis();
          CharSequence contentTitle = getText(R.string.app_name);
-         CharSequence contentText =  "紧急报警正在后台运行";
+         CharSequence contentText =  "紧急报警正在后台保护您";
          Intent intent1 = new Intent(AlertService.this, AlertActivity.class);
          PendingIntent contentIntent = PendingIntent.getActivity(AlertService.this, 0, intent1, Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
          notification.setLatestEventInfo(AlertService.this, contentTitle, contentText, contentIntent);
@@ -262,9 +276,11 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
          sensorManager.unregisterListener(tempSensorEventListener);
          sensorManager.unregisterListener(altiSensorEventListener);
          sensorManager.unregisterListener(accSensorEventListener);
-         locationManager.removeUpdates(this);
          manager.cancel(0);
          releaseWakeLock();
+         if (locationClient != null && locationClient.isStarted()) {
+             locationClient.stop();
+             locationClient = null;}
          super.onDestroy();
      }
      public void alert (int typein){
@@ -315,43 +331,7 @@ public class AlertService extends Service implements LocationListener,OnGetGeoCo
        }
    }
 
-@Override
-public void onLocationChanged(Location location) {
-	// TODO Auto-generated method stub
-	latitude=String.valueOf(location.getLatitude());
-	longitude=String.valueOf(location.getLongitude());
-    if(baiduable){LatLng ptCenter = new LatLng((Float.valueOf(latitude)), 
- 		   (Float.valueOf(longitude)));
-	mSearch.reverseGeoCode(new ReverseGeoCodeOption()
-	.location(ptCenter));}
-}
-@Override
-public void onStatusChanged(String provider, int status, Bundle extras) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void onProviderEnabled(String provider) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void onProviderDisabled(String provider) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void onGetGeoCodeResult(GeoCodeResult arg0) {
-	// TODO Auto-generated method stub
-	
-}
-@Override
-public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
-	// TODO Auto-generated method stub
-	if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-        address="无法找到相应地址";
-			return;
-		}  address=result.getAddress();
-}  
+
+
 }
 

@@ -180,13 +180,12 @@
        <Button
         android:id="@+id/resettodefault"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="2dp"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="29dp"
         android:background="@drawable/normalbuttonstate"
         android:text="恢复默认"
-        android:padding="5dp"
         android:textColor="@drawable/bottombuttonstyle"
         android:textSize="15sp"
         android:textStyle="bold"  /> 
@@ -319,18 +318,18 @@
           android:layout_toRightOf="@+id/name3"
           android:layout_toLeftOf="@+id/accnumber"
           android:layout_alignLeft="@+id/altitudesettingseekbar"
-          android:layout_marginTop="3dp"
+          android:layout_marginTop="3dp" 
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:progressDrawable="@drawable/seekbar_setting"
-		  android:thumb="@drawable/thumb" /> 
+		  android:thumb="@drawable/thumb" />  
         <TextView
-        android:id="@+id/accnumber"
+        android:id="@+id/accnumber" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/altitudenumber"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="13dp" 
         android:layout_marginBottom="3dp"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="1dp"
@@ -397,7 +396,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginRight="1dp"
         android:layout_marginLeft="1dp"
-        android:text="开启此项，发生紧急情况时到您对手机有任何操作前，手机扬声器将以最大音量播放报警声音。"
+        android:text="开启此项，发生紧急情况时，手机扬声器将以最大音量播放报警声音。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
         android:textStyle="bold" />    
@@ -459,7 +458,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginRight="1dp"
         android:layout_marginLeft="1dp"
-        android:text="开启此项，发生紧急情况时到您对手机有任何操作前，如果您的手机光线传感器显示您处在亮度低的地方，手机屏幕及闪光灯（如果有）将不断闪烁。"
+        android:text="开启此项，发生紧急情况时，手机屏幕及闪光灯（如果有）将以SOS的规律不断闪烁。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
         android:textStyle="bold" />    
@@ -497,7 +496,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" 
         android:singleLine="true"
-        android:text="获取地址Get Address"
+        android:text="获取位置Get Location"
         android:textColor="#A4A4A4"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -521,7 +520,7 @@
         android:layout_marginBottom="3dp"
        android:layout_marginRight="1dp"
         android:layout_marginLeft="1dp"
-        android:text="开启此项，您的GPS坐标信息将会通过百度地图服务转化为地址，出现紧急情况时使紧急联系人更直观的获得您的位置，当然，它只会在您连接互联网时工作并消耗少量流量。"
+        android:text="开启此项，您的位置信息将会通过百度定位服务获得，出现紧急情况时使紧急联系人更快速直观的获得您的位置，当然，它只会在您连接互联网时工作并消耗少量流量。"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
         android:textStyle="bold" />    
@@ -635,13 +634,12 @@
        <Button
         android:id="@+id/contactnumberconfirm"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="2dp"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="29dp"
         android:background="@drawable/normalbuttonstate"
         android:text="保存号码"
-        android:padding="5dp"
         android:textColor="@drawable/bottombuttonstyle"
         android:textSize="15sp"
         android:textStyle="bold"  /> 
@@ -735,10 +733,10 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/weibobackground">
         <ImageView
-        android:id="@+id/weiboicon"
+        android:id="@+id/weibologo"
         android:layout_width="40dp" 
         android:layout_height="40dp"
-        android:src="@drawable/aboutdev"
+        android:src="@drawable/logoalert"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp"  />
@@ -750,7 +748,7 @@
         android:layout_marginTop="1dp"
         android:layout_marginBottom="3dp" 
         android:layout_gravity="center_vertical"
-        android:text="ProcoRosso"
+        android:text="点击此处绑定微博"
         android:textColor="#A4A4A4"
         android:textSize="15sp"
         android:textStyle="bold" />
@@ -846,6 +844,7 @@
    <Button 
         android:id="@+id/alertbottom"
         android:text="报警状态"
+        android:textSize="20sp"
         android:textColor="@drawable/bottombuttonstyle"
         android:layout_weight="1"
         android:layout_width="wrap_content"
@@ -856,6 +855,7 @@
         android:id="@+id/configbottom"
         android:text="报警设置"
         android:textColor="#D01B22"
+        android:textSize="20sp"
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
