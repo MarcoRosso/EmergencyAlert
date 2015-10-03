@@ -140,7 +140,13 @@ public class AlertSettings extends Activity{
 				editor.commit();
 				new Thread(new download()).start();
 			} else {
-				Toast.makeText(getApplicationContext(), "暂无个人信息，请联系开发者获取测试资格", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "暂无个人信息，请联系开发者(微博@ProcoRosso)获取测试资格或重新登录尝试", Toast.LENGTH_LONG).show();
+				BmobUser.logOut(AlertSettings.this);   //清除缓存用户对象
+				weiboicon.setImageResource(R.drawable.logoalert);
+				weiboname.setText("点击此处登录");
+				editor = preferences.edit();
+				editor.putString("weibo_json", "");
+				editor.commit();
 			}
 		}else if(msg.what==0x124){
 			weiboicon.setImageBitmap((Bitmap) msg.obj);
@@ -192,7 +198,22 @@ public class AlertSettings extends Activity{
 		temperaturesetting=preferences.getInt("temperaturesetting", 50);
 		altitudesetting=preferences.getInt("altitudesetting", 28);
 		accsetting=preferences.getInt("accsetting",40);
-		
+		String expires=preferences.getString("weibo_expire","");
+		if(!expires.equals("")){
+			if(System.currentTimeMillis()>=Long.parseLong(expires)){
+				BmobUser bmobUser = BmobUser.getCurrentUser(this);
+				if(bmobUser != null){
+					BmobUser.logOut(AlertSettings.this);   //清除缓存用户对象
+					Toast.makeText(getApplicationContext(), "微博绑定已过期，请重新登录！", Toast.LENGTH_LONG).show();
+					weiboicon.setImageResource(R.drawable.logoalert);
+					weiboname.setText("点击此处登录");
+					editor = preferences.edit();
+					editor.putString("weibo_json", "");
+					editor.commit();
+				}
+			}
+		}
+
 		serviceswitch.changbuttonstatues(servicesetting);
 		soundswitch.changbuttonstatues(soundsetting);
 		lightswitch.changbuttonstatues(lightsetting);
@@ -206,9 +227,6 @@ public class AlertSettings extends Activity{
 				+ "/my.db3", null);
 		Bmob.initialize(this, APPID);
 			
-		if(temperaturesetting==100&&altitudesetting==100&&accsetting==100)
-			serviceswitch.changbuttonstatues(false);
-		else serviceswitch.changbuttonstatues(true);
 		temperaturesettingseekbar.setProgress(temperaturesetting);
 		if(temperaturesetting==100) {
 			temperaturenumber.setText("  关闭");
@@ -261,7 +279,6 @@ public class AlertSettings extends Activity{
 		});
 		BmobUser bmobUser = BmobUser.getCurrentUser(this);
 		if(bmobUser != null){
-		    weibosetting.setClickable(false);
 		    weiboname.setText(preferences.getString("weibo_name",""));
 		    downloadpath=preferences.getString("weibo_logo", "");
 		    new Thread(new download()).start();		    
@@ -422,9 +439,19 @@ public class AlertSettings extends Activity{
 	    		editor = preferences.edit();
 				editor.putInt("temperaturesetting", temperaturesetting);
 				editor.commit();
-				if(temperaturesetting==100&&altitudesetting==100&&accsetting==100)
+				if(temperaturesetting==100&&altitudesetting==100&&accsetting==100){
 					serviceswitch.changbuttonstatues(false);
-				else serviceswitch.changbuttonstatues(true);
+					editor = preferences.edit();
+		    		servicesetting=false;
+					editor.putBoolean("servicesetting", servicesetting);
+					editor.commit();
+				}else{
+					serviceswitch.changbuttonstatues(true);
+					editor = preferences.edit();
+		    		servicesetting=true;
+					editor.putBoolean("servicesetting", servicesetting);
+					editor.commit();
+				}
 				}
 			public void onStartTrackingTouch(SeekBar seekBar) {}
 			public void onStopTrackingTouch(SeekBar seekBar) { }     	
@@ -442,9 +469,19 @@ public class AlertSettings extends Activity{
 	    		editor = preferences.edit();
 				editor.putInt("altitudesetting", altitudesetting);
 				editor.commit();
-				if(temperaturesetting==100&&altitudesetting==100&&accsetting==100)
+				if(temperaturesetting==100&&altitudesetting==100&&accsetting==100){
 					serviceswitch.changbuttonstatues(false);
-				else serviceswitch.changbuttonstatues(true);
+					editor = preferences.edit();
+		    		servicesetting=false;
+					editor.putBoolean("servicesetting", servicesetting);
+					editor.commit();
+				}else{
+					serviceswitch.changbuttonstatues(true);
+					editor = preferences.edit();
+		    		servicesetting=true;
+					editor.putBoolean("servicesetting", servicesetting);
+					editor.commit();
+				}
 			}
 			public void onStartTrackingTouch(SeekBar seekBar) {		}
 			public void onStopTrackingTouch(SeekBar seekBar) {	   }   	
@@ -462,9 +499,19 @@ public class AlertSettings extends Activity{
 	    		editor = preferences.edit();
 				editor.putInt("accsetting", accsetting);
 				editor.commit();
-				if(temperaturesetting==100&&altitudesetting==100&&accsetting==100)
+				if(temperaturesetting==100&&altitudesetting==100&&accsetting==100){
 					serviceswitch.changbuttonstatues(false);
-				else serviceswitch.changbuttonstatues(true);
+					editor = preferences.edit();
+		    		servicesetting=false;
+					editor.putBoolean("servicesetting", servicesetting);
+					editor.commit();
+				}else{
+					serviceswitch.changbuttonstatues(true);
+					editor = preferences.edit();
+		    		servicesetting=true;
+					editor.putBoolean("servicesetting", servicesetting);
+					editor.commit();
+				}
 			}
 			public void onStartTrackingTouch(SeekBar seekBar) {  }
 			public void onStopTrackingTouch(SeekBar seekBar) {  }

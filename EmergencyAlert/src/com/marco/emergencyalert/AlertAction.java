@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
 
 import com.marco.emergencyalert.AlertSettings.download;
 
@@ -131,6 +132,7 @@ public class AlertAction extends Activity {
 	private long exitTime = 0;
 	private TextView titletv;
 	private MediaPlayer mMediaPlayer;
+	private int volumenow;
 	SharedPreferences preferences;
 	SharedPreferences.Editor editor;
 	SQLiteDatabase db;
@@ -211,6 +213,14 @@ public class AlertAction extends Activity {
 		}
 		
 		if(soundsetting){
+			AudioManager am = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+			volumenow=am.getStreamVolume(AudioManager.STREAM_MUSIC);
+	        int max = am.getStreamMaxVolume( AudioManager.STREAM_MUSIC );
+	        am.setSpeakerphoneOn(true);
+	        am.setMicrophoneMute(false);   
+	        am.setStreamVolume(AudioManager.STREAM_MUSIC, max,      
+	                AudioManager.FLAG_PLAY_SOUND);
+	        am.setMode(AudioManager.STREAM_MUSIC);
 	        mMediaPlayer=new MediaPlayer();
 	        mMediaPlayer=MediaPlayer.create(this, R.raw.alertbeep);
 	        if (!mMediaPlayer.isPlaying()&&soundsetting)
@@ -224,10 +234,6 @@ public class AlertAction extends Activity {
 			}
 	        mMediaPlayer.setLooping(true);
 	        mMediaPlayer.start();
-	        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-	        int max = am.getStreamMaxVolume( AudioManager.STREAM_MUSIC );
-	        am.setStreamVolume(AudioManager.STREAM_MUSIC, max,      
-	                AudioManager.FLAG_PLAY_SOUND); 
 	        }
 		}
 		
@@ -280,7 +286,21 @@ public class AlertAction extends Activity {
 		editor.commit();}
 		insertData(db,date,latitude,longitude,
 			 typestring,alertstring,address);
-		sendWeibo();
+		String expires=preferences.getString("weibo_expire","");
+		if(!expires.equals("")){
+			if(System.currentTimeMillis()>=Long.parseLong(expires)){
+				BmobUser bmobUser = BmobUser.getCurrentUser(this);
+				if(bmobUser != null){
+					BmobUser.logOut(this);   //清除缓存用户对象
+					Toast.makeText(getApplicationContext(), "微博绑定已过期，请重新登录！", Toast.LENGTH_LONG).show();
+					editor = preferences.edit();
+					editor.putString("weibo_json", "");
+					editor.commit();
+				}
+			}else		
+				sendWeibo();
+		}
+
 	}
 	public void sendWeibo() {
 		new Thread() {
@@ -352,10 +372,14 @@ public class AlertAction extends Activity {
         if(lightsetting){
     	show_handler.removeCallbacks(show_runnable);
     	m_Camera.release();}
-        
+        AudioManager am = (AudioManager) AlertAction.this.getSystemService(Context.AUDIO_SERVICE);
+	    am.setStreamVolume(AudioManager.STREAM_MUSIC, volumenow,      
+                AudioManager.FLAG_PLAY_SOUND);
         if(soundsetting)
-  	     if (mMediaPlayer.isPlaying())
+  	     if (mMediaPlayer.isPlaying()){
+  	    	 mMediaPlayer.stop();
  		     mMediaPlayer.release();
+  	     }
         db.close();
 
     }
@@ -369,6 +393,11 @@ public class AlertAction extends Activity {
         Intent intent= new Intent();
         intent.setClass(AlertAction.this, AlertService.class);
     	stopService(intent);
+	}
+	protected void onPause(){
+		super.onPause();
+ 	     if (mMediaPlayer.isPlaying())
+		     mMediaPlayer.release();
 	}
 	public void setBrightness(float f){
 		WindowManager.LayoutParams lp = getWindow().getAttributes();

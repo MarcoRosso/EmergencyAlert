@@ -3,14 +3,20 @@ package com.marco.emergencyalert;
 
 
 
+import java.io.IOException;
+
+
 import android.app.Activity;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,6 +30,7 @@ import android.widget.Toast;
 
 public class AlertDialog extends Activity{
 	private SeekBar countdownprogressbar;
+	private Vibrator vibrator=null;
 	private TextView gpsinfo;
 	private TextView alerttype;
 	private TextView countdown;
@@ -33,6 +40,7 @@ public class AlertDialog extends Activity{
 	private String latitude;
 	private String longitude;
 	private String address;
+	private MediaPlayer mMediaPlayer;
 	private boolean stopThread=false;
 	private int status = -10;	
 	private int type;
@@ -83,6 +91,21 @@ public class AlertDialog extends Activity{
         longitude=intent.getStringExtra("longitude");
 		address=intent.getStringExtra("address");
 		 
+		vibrator=(Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
+        mMediaPlayer=new MediaPlayer();
+        mMediaPlayer=MediaPlayer.create(this, R.raw.alertbeep);
+        if (!mMediaPlayer.isPlaying())
+        {
+    	try {
+			mMediaPlayer.prepare();
+		} catch (IllegalStateException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
+        }
         countdownprogressbar=(SeekBar)findViewById(R.id.countdownseekbar);
         gpsinfo=(TextView)findViewById(R.id.gpsinfo);
         alerttype=(TextView)findViewById(R.id.alerttype);
@@ -90,7 +113,8 @@ public class AlertDialog extends Activity{
         addressshow=(TextView)findViewById(R.id.addressinfo);
         confirm=(Button)findViewById(R.id.confirm);
         cancel=(Button)findViewById(R.id.cancel);
-
+        
+        vibrator.vibrate(new long[]{0,500,300}, 1);
         switch(type){
         case 0:alerttype.setText("火灾！"); break;
         case 1:alerttype.setText("跌落！"); break;
@@ -124,7 +148,10 @@ public class AlertDialog extends Activity{
 	}
 	  protected void onDestroy() {
 		 stopThread=true;
+		 vibrator.cancel();
 		 super.onDestroy();
+  	     if (mMediaPlayer.isPlaying())
+ 		     mMediaPlayer.release();
 		      };  
 	public int doWork()
 	{	

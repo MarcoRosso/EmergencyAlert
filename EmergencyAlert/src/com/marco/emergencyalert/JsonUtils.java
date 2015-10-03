@@ -9,8 +9,6 @@ public class JsonUtils {
 	public User parseUserFromJson(String jsonData){
 		Gson gson = new Gson();
 		User user = gson.fromJson(jsonData, User.class);
-		System.out.println("name--->" + user.getScreen_name());
-		System.out.println("age---->" + user.getProfile_image_url());
 		return user;
 		
 	}
